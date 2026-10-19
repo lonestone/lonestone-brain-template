@@ -1,0 +1,66 @@
+{
+  "categories": [
+    {
+      "id": "1778690740656",
+      "name": "Web Server",
+      "order": 0,
+      "buttons": [
+        {
+          "id": "1778690766736ubr6b3e",
+          "name": "Start",
+          "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"svg-icon lucide-play\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"></path></svg>",
+          "actions": [
+            {
+              "type": "command",
+              "parameters": {
+                "commandId": "obsidian-shellcommands:shell-command-xv9bllm6b9"
+              }
+            },
+            {
+              "type": "url",
+              "parameters": {
+                "url": "http://localhost:4321/"
+              }
+            }
+          ],
+          "order": 0,
+          "executionMode": "sequential",
+          "stopOnError": true,
+          "delayBetweenActions": 4997
+        },
+        {
+          "id": "1778690872700fubsz05",
+          "name": "Stop",
+          "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"svg-icon lucide-circle-stop\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><rect x=\"9\" y=\"9\" width=\"6\" height=\"6\" rx=\"1\"></rect></svg>",
+          "actions": [
+            {
+              "type": "command",
+              "parameters": {
+                "commandId": "obsidian-shellcommands:shell-command-xxbnen9xul"
+              }
+            }
+          ],
+          "order": 1,
+          "executionMode": "sequential",
+          "stopOnError": true,
+          "delayBetweenActions": 100
+        }
+      ]
+    }
+  ],
+  "panelConfig": {
+    "title": "Buttons Panel",
+    "showTitle": true,
+    "displayStyle": "default",
+    "panelViewType": "list",
+    "enableAnimation": false,
+    "enableEditMode": true,
+    "showTopNavBar": true,
+    "tabsWrap": false,
+    "autoCollapseListView": false
+  },
+  "pathConfig": {
+    "templateFolderPath": "templates/",
+    "scriptFolderPath": "scripts/"
+  }
+}
