@@ -439,6 +439,9 @@ pre.mermaid svg {
    document that needs more room adds padding to its container, which repeats
    properly from page to page.
 
+   Decks are the exception: DeckShell inlines its own `@page` in the pages
+   that hold a deck, so the browser's print dialog picks the slide size.
+
    Named pages are safe: they only apply to elements that ask for them through
    `page: <name>`. That is how covers and separators print full bleed. */
 

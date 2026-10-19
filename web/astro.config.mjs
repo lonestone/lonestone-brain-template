@@ -45,6 +45,7 @@ export default defineConfig({
   ],
   // Fixed port: the dev server is expected there, see CLAUDE.md.
   server: { port: 4321 },
+  devToolbar: { enabled: false },
   vite: {
     plugins: [tailwindcss(), watchWikiContent()],
     resolve: {

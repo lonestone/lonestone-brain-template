@@ -1,16 +1,12 @@
 ---
-// Deck variant of the component catalogue: every ```mdx slide fence of `COMPONENTS.md`, in
-// order, as one real deck. The catalogue page embeds each slide from here by its number.
+// Deck variant of the component catalogue: the ```mdx deck fence of `COMPONENTS.md`, rendered as
+// a real deck. A deck takes the whole window, so the catalogue page embeds it in an iframe.
 import DeckLayout from "~/layouts/DeckLayout.astro";
-import DeckShell from "~/components/deck/DeckShell.astro";
-import { catalogSlides } from "~/lib/component-catalog";
-import { SITE } from "~/lib/site-config";
+import { catalogDeck } from "~/lib/component-catalog";
 
-const slides = await catalogSlides();
+const Deck = await catalogDeck();
 ---
 
-<DeckLayout title="Composants · slides">
-  <DeckShell label={`${SITE.name} × Destinataire`}>
-    {slides.map((Slide) => <Slide />)}
-  </DeckShell>
+<DeckLayout title="Composants · deck">
+  {Deck && <Deck />}
 </DeckLayout>

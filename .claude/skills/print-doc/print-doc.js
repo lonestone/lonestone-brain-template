@@ -99,7 +99,7 @@ try {
   await page.goto(url, { waitUntil: "load", timeout: 60000 });
 
   // A deck declares its own page size (1920 × 1080 by default) through the
-  // @page rule deck-stage injects, so the PDF follows it instead of A4.
+  // `@page` rule DeckShell inlines, so the PDF follows it instead of A4.
   const deck = await page.evaluate(() => {
     const stage = document.querySelector("deck-stage");
     if (!stage) return null;

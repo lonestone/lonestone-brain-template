@@ -1,9 +1,11 @@
 ---
 // Catalogue of the MDX components, drawn from `COMPONENTS.md`: every fence renders live above
-// its code. Slides are embedded from the deck variant, `/COMPONENTS/deck/`.
+// its code. A slide renders in a `.deck` frame, scaled to the column width; the deck demo,
+// which takes the whole window, is embedded from the deck variant, `/COMPONENTS/deck/`.
 import { Code } from "astro:components";
 import Layout from "~/layouts/Layout.astro";
 import { catalogParts } from "~/lib/component-catalog";
+import { SITE } from "~/lib/site-config";
 import { wikiUrl } from "~/lib/wiki";
 
 interface Props {
@@ -21,12 +23,12 @@ const groups = headings
     const end = headings.findIndex((h, i) => i > start && h.depth <= 2);
     return { ...group, items: headings.slice(start + 1, end === -1 ? undefined : end).filter((h) => h.depth === 3) };
   });
-const deckUrl = `${wikiUrl(id)}deck/`;
+const deckLabel = `--deck-label: ${JSON.stringify(`${SITE.name} × Destinataire`)}`;
 const codeClass = "my-0 overflow-x-auto rounded-b-md border border-border px-4 py-3 text-small leading-normal";
 ---
 
 <Layout title={title} breadcrumb={[{ label: title }]}>
-  <main class="doc-page">
+  <main class="doc-page [counter-reset:deck-slide]">
     <article class="doc-body max-w-none">
       {parts.map((part) => {
         if (part.kind === "html") return <Fragment set:html={part.html} />;
@@ -66,15 +68,21 @@ const codeClass = "my-0 overflow-x-auto rounded-b-md border border-border px-4 p
             </div>
           );
         }
+        if (part.kind === "deck") {
+          return (
+            <div class="my-5">
+              <div class="overflow-hidden rounded-t-md border border-b-0 border-border bg-alt">
+                <iframe src={`${wikiUrl(id)}deck/`} title="Deck" loading="lazy" class="block aspect-video w-full border-0" />
+              </div>
+              <Code code={part.code} lang="mdx" theme="github-light" class={codeClass} />
+            </div>
+          );
+        }
+        const Slide = part.Content;
         return (
           <div class="my-5">
-            <div class="overflow-hidden rounded-t-md border border-b-0 border-border bg-alt">
-              <iframe
-                src={part.kind === "slide" ? `${deckUrl}?_snthumb=1#${part.number}` : deckUrl}
-                title={part.kind === "slide" ? `Slide ${part.number}` : "Deck"}
-                loading="lazy"
-                class="block aspect-video w-full border-0"
-              />
+            <div class="deck slide-sample relative aspect-video overflow-hidden rounded-t-md" style={deckLabel}>
+              <Slide />
             </div>
             <Code code={part.code} lang="mdx" theme="github-light" class={codeClass} />
           </div>
@@ -83,3 +91,16 @@ const codeClass = "my-0 overflow-x-auto rounded-b-md border border-border px-4 p
     </article>
   </main>
 </Layout>
+
+<script>
+  // Slides are drawn at 1920 px wide: each frame scales its slide to its own width.
+  const frames = [...document.querySelectorAll<HTMLElement>(".slide-sample")];
+  const observer = new ResizeObserver((entries) => {
+    for (const { target } of entries) {
+      const frame = target as HTMLElement;
+      const slide = frame.querySelector<HTMLElement>("section.slide");
+      if (slide) frame.style.setProperty("--sample-scale", String(frame.clientWidth / slide.offsetWidth));
+    }
+  });
+  frames.forEach((frame) => observer.observe(frame));
+</script>

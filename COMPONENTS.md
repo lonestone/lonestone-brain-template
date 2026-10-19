@@ -2,7 +2,7 @@
 
 Catalogue des composants utilisables dans les MDX du wiki, sans import. Chaque section décrit un composant et donne son usage avec des données fictives. Sur le wiki, à l'adresse `/COMPONENTS/`, chaque bloc de code est rendu en démo juste au-dessus de lui, et les slides sont affichées depuis un deck de démonstration.
 
-Un composant s'ajoute en déposant son fichier dans `web/src/components/` et sa section dans ce fichier. La section porte un titre `###` au nom exact du composant, une description et un bloc de code `mdx` qui sert à la fois de démo et d'exemple d'usage. Un bloc `mdx slide` s'affiche dans le deck de démonstration, un bloc `mdx deck` montre le code d'un deck entier. `npm run components:check`, lancé avant chaque build, vérifie que le dossier et ce fichier restent alignés.
+Un composant s'ajoute en déposant son fichier dans `web/src/components/` et sa section dans ce fichier. La section porte un titre `###` au nom exact du composant, une description et un bloc de code `mdx` qui sert à la fois de démo et d'exemple d'usage. Un bloc `mdx slide` s'affiche comme une slide, à l'échelle de la page, et un bloc `mdx deck` comme un deck complet, avec sa navigation. `npm run components:check`, lancé avant chaque build, vérifie que le dossier et ce fichier restent alignés.
 
 ## Mise en page
 
@@ -528,7 +528,7 @@ Parcours utilisateurs dessinés en bandes horizontales, une par parcours, avec u
 
 ## Slides
 
-Composants des decks, présentés en 16:9. Chaque démo est une slide du deck de démonstration.
+Composants des decks, présentés en 16:9.
 
 Un deck se compose de deux familles. Les **slides entières** couvrent les pages qui reviennent dans tout deck, couverture, intercalaire de partie, équipe, clôture. Le **vocabulaire de blocs** couvre le reste : une `Slide` porte la surface et l'en-tête, un `SlideHead` ouvre la page, et un ou deux blocs remplissent la hauteur restante.
 
@@ -536,7 +536,7 @@ Trois surfaces existent, `paper` par défaut, `ink` pour les pages sombres et `a
 
 ### DeckShell
 
-Enveloppe obligatoire de tout deck MDX. Elle crée la scène 1920 × 1080 mise à l'échelle de l'écran, avec la navigation au clavier et l'impression, et reporte `label` dans l'en-tête de chaque slide, suivi du `kicker` de la slide et de son rang. Le `label` prend en général la forme « Entreprise × Destinataire ».
+Enveloppe obligatoire de tout deck MDX. Elle crée la scène 1920 × 1080 mise à l'échelle de l'écran, avec la liste des slides en miniatures à gauche hors plein écran, la navigation au clavier et au toucher, le plein écran (`F`), les notes de l'orateur (`N`) et l'impression, et reporte `label` dans l'en-tête de chaque slide, suivi du `kicker` de la slide et de son rang. Le `label` prend en général la forme « Entreprise × Destinataire ».
 
 ```mdx deck
 <DeckShell label="Exemple × Maison Bertin">
@@ -569,7 +569,7 @@ Enveloppe obligatoire de tout deck MDX. Elle crée la scène 1920 × 1080 mise �
 
 ### Slide
 
-Cadre d'une slide. Il pose la surface, la barre d'en-tête et les marges ; le contenu vient des blocs du vocabulaire. `centered` cale le corps au centre de la hauteur, pour une slide qui ne porte qu'une idée. `bleed` retire les marges quand un bloc doit toucher les bords, et `media` ou `aside` placent un visuel à droite, ce qui bascule la slide en deux colonnes. `notes` porte les notes de l'orateur, lues par la vue présentateur.
+Cadre d'une slide. Il pose la surface, la barre d'en-tête et les marges ; le contenu vient des blocs du vocabulaire. `centered` cale le corps au centre de la hauteur, pour une slide qui ne porte qu'une idée. `bleed` retire les marges quand un bloc doit toucher les bords, et `media` ou `aside` placent un visuel à droite, ce qui bascule la slide en deux colonnes. `notes` porte les notes de l'orateur, affichées sous la slide avec la touche `N`.
 
 ```mdx slide
 <Slide surface="paper" kicker="Notre conviction">

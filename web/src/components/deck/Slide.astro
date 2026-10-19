@@ -7,7 +7,7 @@
 interface Props {
   /** Surface the slide sits on. */
   surface?: "paper" | "ink" | "accent";
-  /** Right-hand chrome label. The slide number is appended at display time. */
+  /** Right-hand chrome label. The deck's CSS counter appends the slide number. */
   kicker?: string;
   /** Speaker notes, read by the presenter view. */
   notes?: string;
@@ -47,7 +47,7 @@ const hasAside = Astro.slots.has("aside");
   <div class="slide-frame">
     <div class="chrome">
       <span class="mark"><span class="dot"></span></span>
-      <span class="tag" data-kicker={tag ?? ""}></span>
+      <span class="tag">{tag}</span>
     </div>
     {centered ? <div class="slide-body centered"><slot /></div> : <slot />}
   </div>

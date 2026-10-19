@@ -64,7 +64,7 @@ Le corps commence directement par `<DeckShell>`, qui enveloppe toutes les slides
 
 ## Composants disponibles
 
-Le catalogue `COMPONENTS.md`, section « Slides », donne pour chaque composant sa description, ses props et une démo rendue sur `/COMPONENTS/deck/`. Le lire avant d'écrire, et y vérifier les props plutôt que de les supposer.
+Le catalogue `COMPONENTS.md`, section « Slides », donne pour chaque composant sa description, ses props et une démo rendue sur `/COMPONENTS/`. Le lire avant d'écrire, et y vérifier les props plutôt que de les supposer.
 
 Un deck se compose de deux familles.
 

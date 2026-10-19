@@ -22,7 +22,7 @@ Le dossier `web/` affiche chaque page du wiki à son chemin dans le dépôt. Un 
 
 ## Choisir un composant
 
-- `COMPONENTS.md`, à la racine, décrit chaque composant avec une démo et son code ; le site le montre sur `/COMPONENTS/` (et `/COMPONENTS/deck/` pour les slides). Y chercher le composant avant d'écrire, et recopier les props de sa démo plutôt que de les deviner.
+- `COMPONENTS.md`, à la racine, décrit chaque composant avec une démo et son code ; le site le montre sur `/COMPONENTS/`, slides comprises. Y chercher le composant avant d'écrire, et recopier les props de sa démo plutôt que de les deviner.
 - Préférer un composant à un tableau markdown dès qu'il en existe un : chiffres clés (`StatGrid`, `InfoGrid`), étapes (`NextStep`, `PhasesRoadmap`), planning (`GanttPlanning`), risques (`RiskGrid`, `Risk`), budget (`BudgetTable`, `BudgetCallout`), équipe (`TeamProfile`).
 - Un contenu passé en slot s'écrit en markdown simple (listes, paragraphes).
 

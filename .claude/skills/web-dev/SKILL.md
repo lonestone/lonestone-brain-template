@@ -20,7 +20,7 @@ description: Règles de développement de la web app `web/` (Astro, Tailwind, MD
 ## Adapter le template à une entreprise
 
 - `web/src/lib/site-config.ts` porte le nom de l'entreprise, son site, l'email de contact et le titre du wiki. Tout endroit qui nomme l'entreprise le lit là.
-- `web/src/styles/global.css` (`@theme`) porte la palette des documents, `web/src/styles/deck.css` (`body.deck`) celle des decks. Remplacer `--color-brand`, `--color-accent` et `--deck-accent` par les couleurs de la marque, en gardant une couleur de marque claire sur laquelle un texte foncé reste lisible.
+- `web/src/styles/global.css` (`@theme`) porte la palette des documents, `web/src/styles/deck.css` (`.deck`) celle des decks. Remplacer `--color-brand`, `--color-accent` et `--deck-accent` par les couleurs de la marque, en gardant une couleur de marque claire sur laquelle un texte foncé reste lisible.
 - Décrire l'identité visuelle dans la section « Direction artistique » de `CLAUDE.md`, que lisent aussi les skills "generate-image" et "edit-mdx".
 
 ## Collections
@@ -53,16 +53,16 @@ description: Règles de développement de la web app `web/` (Astro, Tailwind, MD
 - **Un composant porte le nom de sa fonction visuelle, jamais celui d'une section** : `NumberedCards` et pas `NosEngagements`, puisque le même composant sert aux engagements, aux personas ou aux principes. Un seul dossier, pas de préfixe par famille : le même composant sert un document et un deck.
 - Un composant reste générique, sans texte propre à un document ni lien avec un projet précis.
 - Un slot MDX arrive déjà enveloppé dans un `<p>` : un composant qui reçoit du contenu l'enveloppe dans un `<div>`, jamais dans un `<p>`, sinon le parseur casse le bloc.
-- **Catalogue.** `COMPONENTS.md` répertorie chaque composant : un titre `###` à son nom, une description courte et un bloc ```` ```mdx ```` d'usage avec des données fictives, rendu en démo sur `/COMPONENTS/`. Une slide prend un bloc ```` ```mdx slide ````, rendu dans `/COMPONENTS/deck/`, et `DeckShell` un bloc ```` ```mdx deck ````. Créer, renommer ou supprimer un composant, ou changer ses props, met à jour sa section dans le même changement. Avant de créer un composant, y chercher celui qui existe déjà.
+- **Catalogue.** `COMPONENTS.md` répertorie chaque composant : un titre `###` à son nom, une description courte et un bloc ```` ```mdx ```` d'usage avec des données fictives, rendu en démo sur `/COMPONENTS/`. Une slide prend un bloc ```` ```mdx slide ````, rendue sur la même page dans un cadre `.deck` à l'échelle. `DeckShell` prend un bloc ```` ```mdx deck ````, seul affiché dans une iframe, sur `/COMPONENTS/deck/`. Créer, renommer ou supprimer un composant, ou changer ses props, met à jour sa section dans le même changement. Avant de créer un composant, y chercher celui qui existe déjà.
 
 ## Styles et jetons
 
 - `web/src/styles/global.css` porte les jetons, la typographie et le cadre des documents. Palette et échelle (`--text-micro` à `--text-h1`) sont déclarées dans `@theme`, donc utilisables en `var(--color-ink)` comme en utilitaire Tailwind (`bg-alt`, `text-muted`, `border-border`).
 - **Le markdown se style par la classe `md`.** `lib/md-class.ts` la pose sur chaque élément issu d'un markdown ; les règles visent `h2.md`, `p.md`, `td.md` et ne débordent jamais dans un composant.
 - **Le cadre est commun.** `.doc-frame`, `.doc-page`, `.doc-body` et `.doc-footer` donnent la largeur de page, le chapô, les listes de prose et le pied de page. Une vue qui diverge redéfinit les jetons, jamais les règles : l'impression descend l'échelle d'un cran sous `@media print`, `.doc-compact` resserre les pages de travail.
-- **Les slides ont leur propre identité**, confinée sous `body.deck` dans `styles/deck.css` : trois surfaces (`paper`, `ink`, `accent`) et une police. Une slide pose sa surface une fois ; ses blocs lisent `--on-surface`, `--rule`, `--muted` et `--dim`, sans variante claire et sombre. Un deck se compose de slides entières (`SlideCover`, `SlideSection`, `SlideStatement`, `SlideTeam`, `SlideGantt`, `SlideClosing`) et des blocs de `components/deck/blocks/`. Une classe CSS du deck ne porte jamais un nom d'utilitaire Tailwind (`invert` en tête), puisque `global.css` voyage avec le deck.
+- **Les slides ont leur propre identité**, confinée sous `.deck` dans `styles/deck.css` (le `body` d'une page de deck, ou le cadre d'une slide du catalogue) : trois surfaces (`paper`, `ink`, `accent`) et une police. Une slide pose sa surface une fois ; ses blocs lisent `--on-surface`, `--rule`, `--muted` et `--dim`, sans variante claire et sombre. Un deck se compose de slides entières (`SlideCover`, `SlideSection`, `SlideStatement`, `SlideTeam`, `SlideGantt`, `SlideClosing`) et des blocs de `components/deck/blocks/`. Une classe CSS du deck ne porte jamais un nom d'utilitaire Tailwind (`invert` en tête), puisque `global.css` voyage avec le deck.
 - **Aucune valeur en dur dans un composant**, ni couleur ni taille de police. Une nuance absente devient un jeton de `global.css`, nommé d'après son rôle et non sa teinte.
-- **Sélecteurs globaux.** La route unique importe tous les renderers, donc tous les blocs `is:global` finissent dans le même bundle. Confiner `html`, `body` ou `*` sous une racine (`body.deck`, `.doc-page`), et enrober le préfixe de `:where()` pour un reset.
+- **Sélecteurs globaux.** La route unique importe tous les renderers, donc tous les blocs `is:global` finissent dans le même bundle. Confiner `html`, `body` ou `*` sous une racine (`.deck`, `.doc-page`), et enrober le préfixe de `:where()` pour un reset.
 
 ## Tailwind d'abord
 
