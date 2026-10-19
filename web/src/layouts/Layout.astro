@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+import WikiSidebar from "../components/WikiSidebar.tsx";
+import { getWikiTree } from "../lib/wiki-fs";
+import type { WikiNode } from "../lib/wiki";
+
+interface Props {
+  title: string;
+  breadcrumb?: Array<{ label: string; href?: string }>;
+  /** Set false for print/deck pages that must render without the wiki chrome. */
+  sidebar?: boolean;
+}
+const { title, breadcrumb, sidebar = true } = Astro.props;
+
+const tree: WikiNode[] = sidebar ? getWikiTree() : [];
+
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" />
+  </head>
+  <body class="bg-page text-neutral-900 font-sans leading-normal m-0 p-0 min-h-screen">
+    {
+      sidebar ? (
+        <div class="flex min-h-screen">
+          <WikiSidebar client:load tree={tree} currentPath={currentPath} />
+          <div class="flex-1 min-w-0">
+            {breadcrumb && breadcrumb.length > 0 && (
+              <div class="print:hidden bg-chrome flex items-center gap-1.5 px-6 h-10 border-b border-zinc-100 text-xs text-zinc-400">
+                {breadcrumb.map((item, i) => (
+                  <>
+                    {i > 0 && <span class="text-zinc-300">/</span>}
+                    {item.href ? (
+                      <a href={item.href} class="text-zinc-500 hover:text-zinc-900 hover:underline no-underline truncate">
+                        {item.label}
+                      </a>
+                    ) : (
+                      <span class="text-zinc-600 truncate">{item.label}</span>
+                    )}
+                  </>
+                ))}
+              </div>
+            )}
+            <slot />
+          </div>
+        </div>
+      ) : (
+        <slot />
+      )
+    }
+    <script>
+      import "../scripts/mermaid.ts";
+    </script>
+  </body>
+</html>

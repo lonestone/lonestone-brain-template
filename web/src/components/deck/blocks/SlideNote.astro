@@ -1,0 +1,12 @@
+---
+// One note of a `SlideNotes` row.
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+<div class="footnote">
+  <div class="tick"></div>
+  {title && <div class="footnote-title">{title}</div>}
+  <div><slot /></div>
+</div>

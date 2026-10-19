@@ -1,0 +1,13 @@
+{
+  "name": "print-doc-skill",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "postinstall": "playwright install chromium",
+    "print": "node print-doc.js"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0"
+  }
+}

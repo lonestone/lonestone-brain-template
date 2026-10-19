@@ -1,0 +1,24 @@
+---
+// The accent band that closes a slide. Without props it holds two or three
+// short statements; with `figure` it becomes one sentence and an amount, the
+// form the deck uses to restate a price.
+interface Props {
+  cols?: 2 | 3;
+  /** Uppercase line above the sentence, in the single-statement form. */
+  label?: string;
+  /** Amount set right, which switches the band to its single-statement form. */
+  figure?: string;
+}
+const { cols = 3, label, figure } = Astro.props;
+---
+{figure ? (
+  <div class="band headline">
+    <div>
+      {label && <div class="band-label">{label}</div>}
+      <div class="band-statement"><slot /></div>
+    </div>
+    <div class="band-figure">{figure}</div>
+  </div>
+) : (
+  <div class:list={["band", `cols-${cols}`]}><slot /></div>
+)}

@@ -1,0 +1,56 @@
+---
+// One 1920×1080 slide. It carries the surface, the chrome bar and the frame;
+// everything inside comes from the block vocabulary in `blocks/`.
+//
+// `media` bleeds an image to the right edge, `aside` sets a small visual beside
+// a fixed-width panel. Both turn the slide into a row.
+interface Props {
+  /** Surface the slide sits on. */
+  surface?: "paper" | "ink" | "accent";
+  /** Right-hand chrome label. The slide number is appended at display time. */
+  kicker?: string;
+  /** Speaker notes, read by the presenter view. */
+  notes?: string;
+  /** Centre the body between the chrome and the bottom of the slide. */
+  centered?: boolean;
+  /** Drop the frame's padding: the slide pads its own blocks. */
+  bleed?: boolean;
+  /** Dark slide, the name used by the decks written before this identity. */
+  variant?: "light" | "dark";
+  /** Chrome label, the name used by those same decks. */
+  label?: string;
+}
+
+const {
+  surface,
+  kicker,
+  notes,
+  centered = false,
+  bleed = false,
+  variant,
+  label,
+} = Astro.props;
+
+const resolved = surface ?? (variant === "dark" ? "ink" : "paper");
+const tag = kicker ?? label;
+const hasMedia = Astro.slots.has("media");
+const hasAside = Astro.slots.has("aside");
+---
+<section
+  class:list={[
+    "slide",
+    { "on-ink": resolved === "ink", "on-accent": resolved === "accent" },
+    { split: hasMedia || hasAside, "has-media": hasMedia, bleed },
+  ]}
+  data-speaker-notes={notes}
+>
+  <div class="slide-frame">
+    <div class="chrome">
+      <span class="mark"><span class="dot"></span></span>
+      <span class="tag" data-kicker={tag ?? ""}></span>
+    </div>
+    {centered ? <div class="slide-body centered"><slot /></div> : <slot />}
+  </div>
+  {hasMedia && <div class="split-media"><slot name="media" /></div>}
+  {hasAside && <div class="split-aside"><slot name="aside" /></div>}
+</section>

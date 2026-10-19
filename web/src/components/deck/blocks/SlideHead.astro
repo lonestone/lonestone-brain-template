@@ -1,0 +1,39 @@
+---
+// The band that opens a slide: an optional kicker, the headline, and on the
+// right either a short uppercase aside or a price badge. Every slide of a deck
+// that is not a cover, a part divider or a closing opens with it.
+interface Props {
+  /** Uppercase line above the headline. */
+  kicker?: string;
+  /** The headline itself. */
+  title: string;
+  /** Short uppercase text set right, `|` breaking the line. */
+  aside?: string;
+  /** Turns the right-hand slot into an accent price badge. */
+  price?: string;
+  /** Label above the price, typically the volume it covers. */
+  priceLabel?: string;
+  /** Headline scale. */
+  size?: "sm" | "md" | "lg";
+}
+
+const { kicker, title, aside, price, priceLabel, size = "md" } = Astro.props;
+const asideLines = aside?.split("|").map((line) => line.trim()) ?? [];
+---
+<div class="slide-head">
+  <div class="headline">
+    {kicker && <span class="kicker">{kicker}</span>}
+    <h2 class:list={["slide-title", { sm: size === "sm", lg: size === "lg" }]}>{title}</h2>
+  </div>
+  {price && (
+    <div class="price-badge">
+      {priceLabel && <div class="price-label">{priceLabel}</div>}
+      <div class="price-value">{price}</div>
+    </div>
+  )}
+  {!price && asideLines.length > 0 && (
+    <div class="slide-aside">
+      {asideLines.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+    </div>
+  )}
+</div>

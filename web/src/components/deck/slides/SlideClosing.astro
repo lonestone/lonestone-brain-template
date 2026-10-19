@@ -1,0 +1,38 @@
+---
+// The last slide: the question put to the room, and who answers it.
+import Slide from "../Slide.astro";
+
+interface Contact {
+  name: string;
+  email: string;
+  /** What the person owns on the project. */
+  role?: string;
+}
+
+interface Props {
+  /** Uppercase line above the headline, typically the time left. */
+  eyebrow?: string;
+  headline: string;
+  /** Sentence under the headline. */
+  sub?: string;
+  contacts: Contact[];
+  label?: string;
+}
+const { eyebrow, headline, sub, contacts, label } = Astro.props;
+---
+<Slide surface="ink" kicker={label}>
+  <div class="slide-body centered">
+    {eyebrow && <div class="kicker" style="color:var(--deck-accent)">{eyebrow}</div>}
+    <h2 class="closing-title">{headline}</h2>
+    {sub && <p class="lede">{sub}</p>}
+  </div>
+  <div class="closing-contacts">
+    {contacts.map((c) => (
+      <div>
+        {c.role && <div class="contact-role">{c.role}</div>}
+        <div class="contact-name">{c.name}</div>
+        <div class="contact-reach">{c.email}</div>
+      </div>
+    ))}
+  </div>
+</Slide>

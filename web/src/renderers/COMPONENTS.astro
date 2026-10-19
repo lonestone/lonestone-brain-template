@@ -1,0 +1,85 @@
+---
+// Catalogue of the MDX components, drawn from `COMPONENTS.md`: every fence renders live above
+// its code. Slides are embedded from the deck variant, `/COMPONENTS/deck/`.
+import { Code } from "astro:components";
+import Layout from "~/layouts/Layout.astro";
+import { catalogParts } from "~/lib/component-catalog";
+import { wikiUrl } from "~/lib/wiki";
+
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+
+const parts = await catalogParts();
+const headings = parts.filter((part) => part.kind === "heading");
+const title = headings.find((h) => h.depth === 1)?.text ?? "Composants";
+const groups = headings
+  .filter((h) => h.depth === 2)
+  .map((group) => {
+    const start = headings.indexOf(group);
+    const end = headings.findIndex((h, i) => i > start && h.depth <= 2);
+    return { ...group, items: headings.slice(start + 1, end === -1 ? undefined : end).filter((h) => h.depth === 3) };
+  });
+const deckUrl = `${wikiUrl(id)}deck/`;
+const codeClass = "my-0 overflow-x-auto rounded-b-md border border-border px-4 py-3 text-small leading-normal";
+---
+
+<Layout title={title} breadcrumb={[{ label: title }]}>
+  <main class="doc-page">
+    <article class="doc-body max-w-none">
+      {parts.map((part) => {
+        if (part.kind === "html") return <Fragment set:html={part.html} />;
+        if (part.kind === "heading") {
+          const Tag = `h${part.depth}` as "h1";
+          const heading = <Tag id={part.slug} class="md scroll-mt-6">{part.text}</Tag>;
+          // The index sits between the introduction and the first group.
+          if (part.depth !== 2 || part.slug !== groups[0].slug) return heading;
+          return (
+            <>
+              <nav class="mb-12 flex flex-col gap-5" aria-label="Index des composants">
+                {groups.map((group) => (
+                  <div>
+                    <a href={`#${group.slug}`} class="mb-2 block text-micro font-semibold tracking-[0.12em] text-muted uppercase">{group.text}</a>
+                    <div class="flex flex-wrap gap-1.5">
+                      {group.items.map((item) => (
+                        <a href={`#${item.slug}`} class="rounded border border-border bg-alt px-2 py-0.5 font-mono text-micro text-ink-soft hover:border-line hover:no-underline">
+                          {item.text}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+              {heading}
+            </>
+          );
+        }
+        if (part.kind === "demo") {
+          const Demo = part.Content;
+          return (
+            <div class="my-5">
+              <div class="overflow-hidden rounded-t-md border border-b-0 border-border bg-surface px-6 py-5 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+                <Demo />
+              </div>
+              <Code code={part.code} lang="mdx" theme="github-light" class={codeClass} />
+            </div>
+          );
+        }
+        return (
+          <div class="my-5">
+            <div class="overflow-hidden rounded-t-md border border-b-0 border-border bg-alt">
+              <iframe
+                src={part.kind === "slide" ? `${deckUrl}?_snthumb=1#${part.number}` : deckUrl}
+                title={part.kind === "slide" ? `Slide ${part.number}` : "Deck"}
+                loading="lazy"
+                class="block aspect-video w-full border-0"
+              />
+            </div>
+            <Code code={part.code} lang="mdx" theme="github-light" class={codeClass} />
+          </div>
+        );
+      })}
+    </article>
+  </main>
+</Layout>

@@ -1,0 +1,49 @@
+---
+// The team as a strip of portraits: one column per person, the accent rule
+// above those who carry the project day to day.
+import Slide from "../Slide.astro";
+import { docImage } from "../../../lib/doc-image";
+
+interface Member {
+  name: string;
+  role: string;
+  /** Years of experience, shown beside the role. */
+  xp?: string;
+  detail: string;
+  photo: string;
+  /** Mark the person with the accent rule. */
+  lead?: boolean;
+}
+
+interface Props {
+  headline: string;
+  members: Member[];
+  /** Line closing the slide. */
+  footer?: string;
+  label?: string;
+}
+
+const { headline, members, footer, label } = Astro.props;
+const portraits = await Promise.all(
+  (members ?? []).map((m) => docImage(m.photo, { width: 700 })),
+);
+---
+<Slide surface="ink" kicker={label} bleed>
+  <h2 class="slide-title slide-inset" style="padding-top:36px;padding-bottom:30px">{headline}</h2>
+  <div
+    class="team-strip"
+    style={`grid-template-columns:repeat(${members.length},1fr)`}
+  >
+    {members.map((m, i) => (
+      <div class:list={["team-member", { lead: m.lead }]}>
+        <img src={portraits[i]} alt={m.name} />
+        <div class="team-card">
+          <div class="team-name">{m.name}</div>
+          <div class="team-role">{m.xp ? `${m.role} · ${m.xp}` : m.role}</div>
+          <div class="team-detail">{m.detail}</div>
+        </div>
+      </div>
+    ))}
+  </div>
+  {footer && <div class="slide-foot slide-inset" style="padding-top:20px;padding-bottom:20px">{footer}</div>}
+</Slide>

@@ -1,0 +1,9 @@
+---
+// A grid of standalone figures: a value set large, and the sentence that reads
+// it. For the facts that open an analysis.
+interface Props {
+  cols?: 2 | 3;
+}
+const { cols = 2 } = Astro.props;
+---
+<div class:list={["figures", `cols-${cols}`]}><slot /></div>

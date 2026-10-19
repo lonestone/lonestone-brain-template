@@ -1,0 +1,11 @@
+---
+// One column of a `SlideBudget`, under its uppercase label.
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+<div class="budget-col">
+  {label && <div class="tile-label">{label}</div>}
+  <slot />
+</div>

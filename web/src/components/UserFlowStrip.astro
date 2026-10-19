@@ -1,0 +1,295 @@
+---
+export type StepKind = 'start' | 'step' | 'key' | 'end' | 'decision' | 'reject' | 'wait'
+
+export interface FlowStep {
+  label: string
+  desc?: string
+  kind?: StepKind
+  async?: boolean  // dashed line before this step
+}
+
+export interface UserFlow {
+  n: number
+  title: string
+  subtitle?: string
+  persona?: string
+  steps: FlowStep[]
+}
+
+interface Props {
+  flows: UserFlow[]
+}
+
+const { flows } = Astro.props
+---
+
+<div class="uf-wrap">
+  {flows.map(flow => (
+    <div class="uf-strip">
+      <div class="uf-header">
+        <span class="uf-num">{flow.n}</span>
+        <div class="uf-meta">
+          <div class="uf-title-row">
+            <span class="uf-title">{flow.title}</span>
+            {flow.persona && <span class="uf-persona">{flow.persona}</span>}
+          </div>
+          {flow.subtitle && <p class="uf-subtitle">{flow.subtitle}</p>}
+        </div>
+      </div>
+
+      <div class="uf-rail">
+        {flow.steps.map((step, i) => (
+          <div class="uf-step-group">
+            {i > 0 && (
+              <div class:list={['uf-edge', step.async && 'uf-edge-dash']}></div>
+            )}
+            <div class="uf-step">
+              <div class:list={['uf-node', `uf-node-${step.kind ?? 'step'}`]}>
+                {(step.kind === 'end') && <span class="uf-node-inner" />}
+                {(step.kind === 'key') && <span class="uf-node-inner" />}
+              </div>
+              <span class="uf-label">{step.label}</span>
+              {step.desc && <span class="uf-desc">{step.desc}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  /* ── Wrapper ── */
+  .uf-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.5rem 0 2rem;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* ── Strip ── */
+  .uf-strip {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  /* ── Header ── */
+  .uf-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem 0.7rem;
+    border-bottom: 1px solid var(--color-alt);
+    background: var(--color-alt);
+  }
+
+  .uf-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: var(--color-brand);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .uf-meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .uf-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .uf-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+  }
+
+  .uf-persona {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--color-alt);
+    color: var(--color-muted);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-family: ui-monospace, monospace;
+  }
+
+  .uf-subtitle {
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  /* ── Rail (horizontal flow) ── */
+  .uf-rail {
+    display: flex;
+    align-items: flex-start;
+    padding: 1.1rem 1rem 1rem;
+  }
+
+  /* First group has no edge: fixed width */
+  .uf-step-group:first-child {
+    flex: 0 0 72px;
+    min-width: 72px;
+  }
+
+  /* Subsequent groups: flex to fill available space */
+  .uf-step-group {
+    display: flex;
+    align-items: flex-start;
+    flex: 1 1 0;
+    min-width: 66px;
+  }
+
+  /* ── Edge (connector line) ── */
+  .uf-edge {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 1.5px;
+    background: var(--color-line);
+    margin-top: 10px;
+    position: relative;
+  }
+
+  .uf-edge::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: -3px;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+    border-left: 5px solid var(--color-line);
+  }
+
+  .uf-edge-dash {
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-line) 0,
+      var(--color-line) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+  }
+  .uf-edge-dash::after {
+    border-left-color: var(--color-line);
+  }
+
+  /* ── Step ── */
+  .uf-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    padding: 0 3px;
+  }
+
+  /* ── Node shapes ── */
+  .uf-node {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .uf-node-start {
+    background: var(--color-ink);
+    width: 14px;
+    height: 14px;
+    margin: 3px;
+  }
+
+  .uf-node-step {
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1.6px var(--color-ink);
+  }
+
+  .uf-node-key {
+    background: var(--color-ink);
+    width: 22px;
+    height: 22px;
+    box-shadow: 0 0 0 3px var(--color-border);
+  }
+
+  .uf-node-end {
+    background: var(--color-ink);
+    border-radius: 3px;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+  }
+
+  .uf-node-decision {
+    background: var(--color-brand-soft);
+    box-shadow: inset 0 0 0 1.6px var(--color-warn-ink);
+    transform: rotate(45deg);
+    border-radius: 3px;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+  }
+
+  .uf-node-reject {
+    background: var(--color-alert-wash);
+    box-shadow: inset 0 0 0 1.6px var(--color-alert);
+  }
+
+  .uf-node-wait {
+    background: var(--color-alt);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    border-radius: 999px;
+  }
+
+  /* ── Labels ── */
+  .uf-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.005em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+
+  .uf-desc {
+    font-size: 0.585rem;
+    color: var(--color-muted);
+    text-align: center;
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+</style>

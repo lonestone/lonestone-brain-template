@@ -1,0 +1,315 @@
+---
+interface Segment {
+  from: number        // 1-based column start
+  to: number          // 1-based column end (inclusive)
+  label?: string
+  variant: 'framing' | 'lot1' | 'lot2' | 'lot3' | 'migration' | 'run' | 'warranty'
+}
+
+interface Track {
+  label: string
+  segments: Segment[]
+}
+
+interface ColGroup {
+  label: string
+  span: number
+}
+
+interface Milestone {
+  afterCol: number
+  label: string
+  sub?: string
+  align?: 'top' | 'bottom'
+}
+
+interface Props {
+  totalCols: number
+  colGroups: ColGroup[]
+  tracks: Track[]
+  milestones?: Milestone[]
+}
+
+const { totalCols, colGroups, tracks, milestones = [] } = Astro.props
+
+const toP = (n: number) => (n / totalCols * 100).toFixed(3) + '%'
+const segLeft  = (from: number) => toP(from - 1)
+const segWidth = (from: number, to: number) => toP(to - from + 1)
+const mlLeft   = (afterCol: number) => toP(afterCol)
+
+// A milestone at the end of the run overflows the frame if it stays centred on
+// its line, so it anchors to whichever edge it reaches.
+const pins = milestones.map(m => ({
+  ...m,
+  edge: m.afterCol >= totalCols ? "end" : m.afterCol < 1 ? "start" : "mid",
+}))
+
+let _start = 1
+const groups = colGroups.map(g => {
+  const s = _start
+  _start += g.span
+  return { ...g, start: s }
+})
+---
+
+<div class="gantt">
+
+  <!-- Header : mois -->
+  <div class="g-row g-head-row">
+    <div class="g-lbl"></div>
+    <div class="g-tl">
+      {groups.map(g => (
+        <div class="g-month" style={`left:${segLeft(g.start)};width:${segWidth(g.start, g.start + g.span - 1)}`}>
+          {g.label}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Ligne jalons -->
+  {milestones.length > 0 && (
+    <div class="g-row g-ml-row">
+      <div class="g-lbl g-lbl-ml">Jalons</div>
+      <div class="g-tl g-tl-ml">
+        {pins.map(m => (
+          <div class:list={["g-ml-pin", `g-ml-${m.edge}`]} style={`left:${mlLeft(m.afterCol)}`}>
+            <span class="g-ml-name">{m.label}</span>
+            {m.sub && <span class="g-ml-sub">{m.sub}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- Tracks -->
+  {tracks.map(track => (
+    <div class="g-row">
+      <div class="g-lbl">{track.label}</div>
+      <div class="g-tl g-tl-track">
+        <!-- fond en colonnes alternées -->
+        {Array.from({ length: totalCols }).map((_, i) => (
+          <div class:list={["g-col-bg", i % 2 === 1 && "g-col-odd"]} style={`left:${toP(i)};width:${toP(1)}`} />
+        ))}
+        {track.segments.map(s => (
+          <div
+            class="g-bar-wrap"
+            style={`left:${segLeft(s.from)};width:${segWidth(s.from, s.to)}`}
+          >
+            <div class={`g-bar g-bar-${s.variant}`}></div>
+            {s.label && <span class="g-bar-lbl">{s.label}</span>}
+          </div>
+        ))}
+        {milestones.map(m => (
+          <div class="g-ml-line" style={`left:${mlLeft(m.afterCol)}`} />
+        ))}
+      </div>
+    </div>
+  ))}
+
+</div>
+
+<style>
+  /* ── Wrapper ── */
+  .gantt {
+    font-size: 0.78rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    /* Milestone labels reach past the frame: clip with a margin rather than
+       cutting them flat at the edge. */
+    overflow: clip;
+    overflow-clip-margin: 20px;
+    margin: 1.5em 0 2em;
+  }
+
+  /* ── Row ── */
+  .g-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .g-row:last-child { border-bottom: none; }
+
+  /* ── Label cell ── */
+  .g-lbl {
+    width: 130px;
+    min-width: 130px;
+    padding: 0 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    background: var(--color-alt);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    white-space: pre-line;
+    line-height: 1.35;
+  }
+
+  /* ── Timeline cell ── */
+  .g-tl {
+    flex: 1;
+    position: relative;
+    min-height: 64px;
+  }
+
+  /* ── Header row ── */
+  .g-head-row .g-lbl {
+    background: var(--color-ink);
+    min-height: 32px;
+  }
+  .g-head-row .g-tl {
+    background: var(--color-ink);
+    min-height: 32px;
+  }
+
+  /* ── Ligne jalons ── */
+  .g-ml-row {
+    background: var(--color-alt);
+  }
+  .g-lbl-ml {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-faint);
+  }
+  .g-tl-ml {
+    min-height: 34px;
+  }
+
+  .g-month {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--color-faint);
+    letter-spacing: 0.03em;
+    border-right: 1px solid var(--color-ink);
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* ── Column background stripes ── */
+  .g-col-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  .g-col-odd {
+    background: rgba(0,0,0,0.018);
+  }
+
+  /* ── Segments ── */
+  .g-bar-wrap {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    z-index: 1;
+  }
+  .g-bar {
+    flex: 0 0 14px;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .g-bar-lbl {
+    font-size: 0.58rem;
+    font-weight: 700;
+    white-space: normal;
+    overflow: hidden;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--color-ink-soft);
+    padding: 0 2px;
+  }
+
+  /* Variants */
+  .g-bar-framing    { background: var(--color-ink); color: var(--color-brand); }
+  .g-bar-lot1     { background: var(--color-brand); color: var(--color-ink); border: 1px solid var(--color-warn-ink); }
+  .g-bar-lot2     { background: var(--color-ink-soft); color: var(--color-surface); }
+  .g-bar-lot3     { background: var(--color-border); color: var(--color-ink-soft); }
+  .g-bar-run      { background: var(--color-ok-wash); color: var(--color-ok-ink); }
+  .g-bar-migration {
+    background: transparent;
+    border: 2px dashed var(--color-line);
+    color: var(--color-faint);
+    top: 10px;
+    bottom: 10px;
+    border-radius: 3px;
+  }
+  .g-bar-warranty {
+    background: transparent;
+    border: 2px dashed var(--color-warn);
+    color: var(--color-brand-ink);
+    top: 10px;
+    bottom: 10px;
+    border-radius: 3px;
+  }
+
+  /* ── Milestone line ── */
+  .g-ml-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-alert);
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  /* ── Milestone pin in header ── */
+  /* The label needs a width so it does not break across three lines, and that
+     width overflows the frame as soon as the milestone touches an edge. It
+     therefore aligns on the edge it reaches, and stays centred everywhere else. */
+  .g-ml-pin {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    width: 130px;
+    z-index: 3;
+  }
+  .g-ml-mid   { align-items: center;    text-align: center; transform: translateX(-50%); }
+  .g-ml-end   { align-items: flex-end;  text-align: right;  transform: translateX(-100%); }
+  .g-ml-start { align-items: flex-start; text-align: left;  transform: none; }
+
+  .g-ml-name {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: var(--color-alert);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .g-ml-sub {
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--color-alert-line);
+  }
+
+  /* Bars are absolutely positioned inside each row: a page break truncates
+     them instead of carrying them over. The whole plan therefore moves to the
+     next page, and each row stays in one piece. */
+  @media print {
+    .gantt {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .g-row {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+</style>

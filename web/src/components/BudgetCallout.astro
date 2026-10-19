@@ -1,0 +1,45 @@
+---
+// BudgetCallout.astro: Budget figure on a brand panel: label and amount on
+// the left, pricing terms and a note on the right.
+// A numeric `amount` is formatted in euros excl. VAT; a string passes through,
+// its trailing currency unit set smaller than the figure.
+interface Props {
+  label?: string
+  amount?: number | string
+  min?: string
+  max?: string
+  duration?: string
+  note?: string
+}
+const { label = 'Budget estimatif', amount, min, max, duration, note } = Astro.props
+
+let figure: string
+let unit = ''
+if (typeof amount === 'number') {
+  figure = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(amount)
+  unit = '€ HT'
+} else {
+  const text = amount ?? (min && max ? `${min} → ${max}` : (min ?? max ?? ''))
+  const match = text.match(/^(.*\d)\s*(€[^\d]*)$/)
+  figure = match ? match[1] : text
+  unit = match ? match[2] : ''
+}
+---
+
+<div class="mt-4 flex flex-col items-start gap-6 break-inside-avoid rounded-2xl bg-brand px-7 py-6 text-ink sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <div class="mb-2 text-micro font-semibold tracking-[0.15em] uppercase opacity-55">
+      {label}
+    </div>
+    <div class="flex flex-wrap items-baseline gap-1.5 text-h1 leading-none font-medium tracking-tight tabular-nums">
+      {figure}
+      {unit && <span class="text-lead font-medium">{unit}</span>}
+    </div>
+  </div>
+  {(duration || note) && (
+    <div class="text-left sm:max-w-[50%] sm:text-right">
+      {duration && <div class="text-small font-semibold">{duration}</div>}
+      {note && <div class="mt-1 text-micro opacity-60">{note}</div>}
+    </div>
+  )}
+</div>

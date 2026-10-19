@@ -1,0 +1,42 @@
+---
+// TableOfContent.astro: Document contents, built from its own headings.
+// The list comes from `headings`, returned by `render(entry)`: nothing is typed
+// by hand, so the contents follow the sections actually present. Numbering
+// mirrors DocTheme's `doc-section` counter.
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+interface Props {
+  headings: Heading[]
+  label?: string
+}
+const { headings, label = "Sommaire" } = Astro.props
+const sections = headings.filter((h) => h.depth === 2)
+---
+
+{sections.length > 0 && (
+  /* In print the contents take a page of their own: the cover comes before,
+     the first section after. */
+  <nav
+    class="doc-toc mb-14 break-inside-avoid print:m-0 print:break-before-page print:break-after-page"
+    aria-label={label}
+  >
+    <p class="mb-3.5 text-[10.5px] font-semibold tracking-[0.15em] text-muted uppercase">{label}</p>
+    <ol class="m-0 list-none p-0">
+      {sections.map((section, i) => (
+        <li class="border-t border-border last:border-b">
+          <a class="group flex items-baseline gap-4 py-2.5 text-inherit no-underline" href={`#${section.slug}`}>
+            <span class="w-[26px] shrink-0 text-[12.5px] font-medium tracking-[0.04em] text-faint tabular-nums">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span class="text-[15px] leading-snug font-medium text-ink group-hover:underline group-hover:decoration-brand group-hover:decoration-2 group-hover:underline-offset-2 print:text-sm">
+              {section.text}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

@@ -1,0 +1,36 @@
+---
+// Header banner of printable documents: company name and recipient on the left,
+// document kind and date on the right.
+import { SITE } from "~/lib/site-config";
+
+interface Props {
+  /** Recipient, shown under the company name. */
+  recipient?: string;
+  /** Document kind, in small caps. */
+  kind: string;
+  /** Already-formatted date. */
+  date: string;
+  /** On a cover, the banner gives way to the visual that follows it. */
+  onCover?: boolean;
+}
+const { recipient, kind, date, onCover = false } = Astro.props;
+---
+
+<header
+  class:list={[
+    "doc-header flex flex-col flex-wrap gap-6 border-b border-border pb-7 sm:flex-row sm:items-start sm:justify-between",
+    onCover ? "mb-0" : "mb-14",
+    /* In print the banner holds its height so the cover can lean on it, and
+       gives its rule back to the document. */
+    "print:mb-0 print:min-h-(--doc-header-height) print:border-b-0 print:pb-0",
+  ]}
+>
+  <div class="flex flex-col gap-2.5">
+    <span class="text-lg leading-none font-semibold tracking-tight text-ink">{SITE.name}</span>
+    {recipient && <span class="text-[12.5px] text-muted">pour {recipient}</span>}
+  </div>
+  <div class="text-left sm:text-right">
+    <div class="mb-1.5 text-[10.5px] font-semibold tracking-[0.15em] text-muted uppercase">{kind}</div>
+    <div class="text-[12.5px] text-muted">{date}</div>
+  </div>
+</header>

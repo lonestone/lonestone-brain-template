@@ -1,0 +1,58 @@
+---
+// PhasesRoadmap.astro: Horizontal run of project phases, separated by
+// chevrons, with an optional go-live milestone between two of them.
+interface Phase {
+  label: string
+  title: string
+  sub?: string
+  budget?: string
+  optional?: boolean
+  highlight?: boolean
+  goLiveBefore?: boolean
+}
+
+interface Props {
+  phases: Phase[]
+}
+
+const { phases } = Astro.props
+---
+
+<div class="my-6 flex items-start gap-[5px] text-[0.78em]">
+  {phases.map((p, i) => (
+    <>
+      {i > 0 && p.goLiveBefore ? (
+        <div class="flex w-9 shrink-0 flex-col items-center gap-[5px] pt-1.5">
+          <div class="h-12 w-0.5 rounded-sm bg-alert"></div>
+          <span class="text-center text-[0.62em] leading-tight font-medium tracking-[0.05em] text-alert uppercase">
+            Mise en<br />prod
+          </span>
+        </div>
+      ) : i > 0 ? (
+        <span class="shrink-0 pt-3.5 text-2xl leading-none text-ink">›</span>
+      ) : null}
+      <div
+        class:list={[
+          "flex min-w-0 flex-1 flex-col gap-[0.3rem] px-2.5 pt-3 pb-2.5 text-center border-t-[3px]",
+          p.optional ? "border-dashed border-faint" : "border-ink",
+          p.highlight && "rounded-b-md bg-ink text-surface",
+        ]}
+      >
+        <strong class:list={["text-[1em] font-medium", p.highlight ? "text-brand" : "text-inherit"]}>
+          {p.label}
+        </strong>
+        <span class="leading-snug font-medium text-inherit">{p.title}</span>
+        {p.sub && (
+          <span class:list={["text-[0.9em] leading-snug", p.highlight ? "text-faint" : "text-muted"]}>
+            {p.sub}
+          </span>
+        )}
+        {p.budget && (
+          <strong class:list={["mt-[0.3rem] font-semibold italic", p.highlight ? "text-brand" : "text-ink"]}>
+            {p.budget}
+          </strong>
+        )}
+      </div>
+    </>
+  ))}
+</div>

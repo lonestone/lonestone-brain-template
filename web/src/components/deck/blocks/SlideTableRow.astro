@@ -1,0 +1,26 @@
+---
+// One row of a `SlideTable`. `cells` are set right and read as figures unless
+// `soft` names them, which greys a count next to an amount.
+interface Props {
+  /** First column, the row's subject. */
+  label: string;
+  /** Second line under the label, in the muted tone. */
+  detail?: string;
+  /** Remaining columns, left to right. */
+  cells?: string[];
+  /** Indices of `cells` to set in the muted tone. */
+  soft?: number[];
+  /** Render this row as the accent total line. */
+  total?: boolean;
+}
+const { label, detail, cells = [], soft = [], total = false } = Astro.props;
+---
+<div class={total ? "dtable-total" : "dtable-row"}>
+  <div class="cell-key">
+    {label}
+    {detail && <small>{detail}</small>}
+  </div>
+  {cells.map((cell, i) => (
+    <div class:list={["cell-num", { soft: soft.includes(i) }]}>{cell}</div>
+  ))}
+</div>

@@ -1,0 +1,33 @@
+---
+// One step of a `SlideChain`, with the chevron that leads to the next. `tone`
+// marks what the step is in the process: `anchor` for where it starts,
+// `accent` for the step that carries the value, `ink` for its outcome,
+// `pending` for the one that waits on a decision.
+interface Props {
+  /** Uppercase line above the title. */
+  label?: string;
+  title: string;
+  /** One line under the title. */
+  detail?: string;
+  tone?: "plain" | "anchor" | "accent" | "ink" | "pending";
+  /** Chevron drawn after the step. `last` draws none. */
+  link?: "next" | "loop" | "last";
+}
+const { label, title, detail, tone = "plain", link = "next" } = Astro.props;
+---
+<div
+  class:list={[
+    "chain-step",
+    {
+      anchor: tone === "anchor",
+      "tone-accent": tone === "accent",
+      "tone-ink": tone === "ink",
+      pending: tone === "pending",
+    },
+  ]}
+>
+  {label && <div class="chain-label">{label}</div>}
+  <div class="chain-title">{title}</div>
+  {detail && <div class="chain-detail">{detail}</div>}
+</div>
+{link !== "last" && <div class="chain-arrow">{link === "loop" ? "⇢" : "›"}</div>}

@@ -1,0 +1,60 @@
+---
+// The opening slide: a kicker, the title at display scale, a lede, and a row of
+// facts under the accent rule.
+import Slide from "../Slide.astro";
+
+interface MetaItem {
+  key: string;
+  value: string;
+}
+
+interface Props {
+  title: string;
+  /** Sentence under the title. */
+  subtitle?: string;
+  /** Uppercase line above the title. */
+  tag?: string;
+  /** Facts closing the slide, three reading best. */
+  items?: MetaItem[];
+  /** The same facts under the names the earlier decks use. */
+  meta?: {
+    document?: string;
+    date?: string;
+    coverage?: string;
+    golive?: string;
+  };
+  surface?: "paper" | "ink" | "accent";
+}
+
+const { title, subtitle, tag, items, meta, surface = "ink" } = Astro.props;
+
+const LEGACY_KEYS: [keyof NonNullable<Props["meta"]>, string][] = [
+  ["document", "Document"],
+  ["date", "Date"],
+  ["coverage", "Périmètre"],
+  ["golive", "Mise en ligne"],
+];
+
+const facts =
+  items ??
+  LEGACY_KEYS.flatMap(([key, label]) =>
+    meta?.[key] ? [{ key: label, value: meta[key] as string }] : [],
+  );
+---
+<Slide surface={surface}>
+  <div class="cover-body">
+    {tag && <div class="kicker">{tag}</div>}
+    <h1 class="cover-title">{title}</h1>
+    {subtitle && <p class="cover-lede">{subtitle}</p>}
+  </div>
+  {facts.length > 0 && (
+    <div class="cover-meta">
+      {facts.map((fact) => (
+        <div>
+          <div class="meta-key">{fact.key}</div>
+          <div class="meta-value">{fact.value}</div>
+        </div>
+      ))}
+    </div>
+  )}
+</Slide>

@@ -1,0 +1,26 @@
+---
+// A product screenshot in a browser frame, filling the height the header leaves
+// it. Content in the slot sits beside the screen, for the two or three points
+// the screen illustrates. Unlike `SlideMedia`, the image is never desaturated
+// and is anchored to its top, so a page reads from its first line.
+import { docImage } from "../../../lib/doc-image";
+
+interface Props {
+  src: string;
+  alt?: string;
+  /** Vertical framing when the capture is taller than the frame. */
+  position?: string;
+  /** Puts the screen on the right of the text instead of the left. */
+  reverse?: boolean;
+}
+const { src, alt = "", position = "top", reverse = false } = Astro.props;
+const rendered = await docImage(src, { width: 2200 });
+const hasText = Astro.slots.has("default");
+---
+<div class:list={["slide-screen", { "has-text": hasText, reverse }]}>
+  <figure class="screen-frame">
+    <div class="screen-bar"><span></span><span></span><span></span></div>
+    <img src={rendered} alt={alt} style={`object-position:${position}`} />
+  </figure>
+  {hasText && <div class="screen-text"><slot /></div>}
+</div>

@@ -1,0 +1,12 @@
+---
+// A sentence held by the accent bar. The deck's way of setting one idea apart
+// without giving it a slide of its own.
+interface Props {
+  /** Renders at lede scale rather than body scale. */
+  size?: "body" | "lede";
+}
+const { size = "lede" } = Astro.props;
+---
+<div class="quote">
+  <div class:list={[size === "lede" ? "lede" : "prose"]}><slot /></div>
+</div>

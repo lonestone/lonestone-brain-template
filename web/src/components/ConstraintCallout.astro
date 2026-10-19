@@ -1,0 +1,89 @@
+---
+// Callout for the cross-cutting constraints of a backlog.
+// type: "info" (bleu, neutre), "warning" (ambre, attention), "restriction" (rouge, bloquant)
+// title: label shown in the header
+interface Props {
+  title?: string
+  type?: 'info' | 'warning' | 'restriction'
+}
+const { title, type = 'info' } = Astro.props
+
+const styles = {
+  info: {
+    wrapper: 'bg-blue-50 border border-blue-100 border-t-2 border-t-blue-400',
+    icon: 'text-blue-400',
+    title: 'text-blue-700',
+    bullet: 'text-blue-300',
+  },
+  warning: {
+    wrapper: 'bg-amber-50 border border-amber-100 border-t-2 border-t-amber-400',
+    icon: 'text-amber-400',
+    title: 'text-amber-700',
+    bullet: 'text-amber-300',
+  },
+  restriction: {
+    wrapper: 'bg-red-50 border border-red-100 border-t-2 border-t-red-400',
+    icon: 'text-red-400',
+    title: 'text-red-700',
+    bullet: 'text-red-300',
+  },
+}
+
+const s = styles[type]
+---
+
+<div class={`constraint-callout rounded-b-md my-4 px-4 pt-3 pb-2 ${s.wrapper}`}>
+  {title && (
+    <p class={`text-xs font-semibold uppercase tracking-wider mb-2 ${s.title}`}>{title}</p>
+  )}
+  <div class="constraint-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .constraint-callout :global(ul) {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .constraint-callout :global(li) {
+    position: relative;
+    padding: 0.3rem 0 0.3rem 1.4rem !important;
+    margin: 0 !important;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: var(--color-ink);
+  }
+
+  .constraint-callout :global(li:last-child) {
+    border-bottom: none;
+  }
+
+  .constraint-callout :global(li::before) {
+    content: '·' !important;
+    position: absolute;
+    left: 0.3rem;
+    top: 0.35rem;
+    font-size: 1.1em;
+    font-weight: 700;
+  }
+
+  /* Bullet colour override, cascaded from the parent type */
+  .constraint-callout.bg-blue-50 :global(li::before)      { color: var(--color-info); }
+  .constraint-callout.bg-amber-50 :global(li::before)     { color: var(--color-warn-line); }
+  .constraint-callout.bg-red-50 :global(li::before)       { color: var(--color-alert-line); }
+
+  .constraint-callout :global(strong) {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .constraint-callout :global(p) {
+    font-size: 0.75rem !important;
+    color: var(--color-ink-soft) !important;
+    margin: 0 0 0.4rem !important;
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+// A block centred in the height the header leaves it: a kicker, one sentence
+// set large, and whatever the slide adds under it. The deck uses it to hold a
+// positioning statement or the enjeu that opens an option.
+interface Props {
+  /** Uppercase line above the sentence. */
+  kicker?: string;
+  /** The sentence itself. */
+  title: string;
+  /** Headline scale, or the smaller `enjeu` scale for a long sentence. */
+  size?: "title" | "enjeu";
+  /** Frame the block between two rules. */
+  ruled?: boolean;
+}
+const { kicker, title, size = "title", ruled = false } = Astro.props;
+---
+<div class:list={["slide-body", "centered", { ruled }]}>
+  {kicker && <div class="kicker">{kicker}</div>}
+  {size === "enjeu"
+    ? <p class="enjeu">{title}</p>
+    : <h2 class="slide-title">{title}</h2>}
+  <slot />
+</div>

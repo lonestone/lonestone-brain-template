@@ -1,0 +1,14 @@
+---
+// One figure of a `SlideFigures` grid. The value takes any string, so a fact
+// without a number ("Après la page produit") sits at the same scale as one.
+interface Props {
+  value: string;
+}
+const { value } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class="figure-item">
+  <div class="tick"></div>
+  <div class="figure-value">{value}</div>
+  {hasBody && <div class="prose"><slot /></div>}
+</div>

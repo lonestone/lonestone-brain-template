@@ -1,0 +1,24 @@
+---
+// One card of a `SlidePanels` row. `tone="ink"` inverts it against the slide,
+// which is how the deck marks the panel that carries the answer.
+interface Props {
+  /** Uppercase line above the title. */
+  kicker?: string;
+  /** Rank shown at the card's own scale, above the title. */
+  n?: string;
+  title?: string;
+  /** Second line, set bolder than the paragraph. */
+  lead?: string;
+  tone?: "surface" | "ink" | "accent";
+}
+const { kicker, n, title, lead, tone = "surface" } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class:list={["panel", { "tone-ink": tone === "ink", "tone-accent": tone === "accent" }]}>
+  <div class="tick"></div>
+  {kicker && <div class="tile-label">{kicker}</div>}
+  {n && <div class="tally">{n}</div>}
+  {title && <div class="panel-title">{title}</div>}
+  {lead && <div class="panel-lead">{lead}</div>}
+  {hasBody && <div class="prose"><slot /></div>}
+</div>

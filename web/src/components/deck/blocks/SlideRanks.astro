@@ -1,0 +1,10 @@
+---
+// Numbered rows filling the slide. The default lays out rank, subject and
+// answer in three columns, which is how risks and their mitigations read;
+// `wide` gives one statement per row, for a list that needs no second column.
+interface Props {
+  wide?: boolean;
+}
+const { wide = false } = Astro.props;
+---
+<div class:list={["ranks", { wide }]}><slot /></div>

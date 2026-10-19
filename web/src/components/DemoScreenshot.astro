@@ -1,0 +1,26 @@
+---
+import { docImage } from '~/lib/doc-image'
+// DemoScreenshot.astro: Full-width screenshot, titled and captioned. The title
+// carries the same weight and size as any card title, so a screenshot reads as
+// one more block of the document rather than as a labelled exhibit.
+interface Props {
+  src: string
+  title?: string
+  caption?: string
+  alt?: string
+}
+const { src, title, caption, alt = '' } = Astro.props
+const renderedSrc = await docImage(src, { width: 1600 })
+---
+
+<figure class="demo-screenshot my-8 overflow-hidden rounded-sm border border-border break-inside-avoid">
+  <div class="bg-surface leading-none">
+    <img src={renderedSrc} alt={alt} class="block h-auto w-full" />
+  </div>
+  {(title || caption) && (
+    <figcaption class="border-t border-border bg-alt px-4 py-3">
+      {title && <div class="text-sm leading-snug font-medium text-ink">{title}</div>}
+      {caption && <p class="mt-1 text-[0.78rem] leading-normal text-ink-soft">{caption}</p>}
+    </figcaption>
+  )}
+</figure>

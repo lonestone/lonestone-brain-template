@@ -1,0 +1,37 @@
+---
+// The divider that opens a part: its rank in the accent, the part's title at
+// headline scale, the sentence that announces it, and a visual beside.
+import Slide from "../Slide.astro";
+import SlideMedia from "../blocks/SlideMedia.astro";
+
+interface Props {
+  /** Rank of the part, set in the accent. */
+  num?: string;
+  title: string;
+  /** Sentence announcing what the part covers. */
+  sub?: string;
+  /** Path of the visual, e.g. "/assets/visuels/cube.png". */
+  img?: string;
+  /** Uppercase line beside the rank. */
+  kicker?: string;
+  label?: string;
+}
+const { num, title, sub, img, kicker, label } = Astro.props;
+const src = img;
+const tag = kicker ?? (num ? `Partie ${Number(num)}` : undefined);
+---
+<Slide surface="ink" kicker={label}>
+  <div class="part-body">
+    {num && (
+      <div class="part-index">
+        <span class="part-num">{num}</span>
+        {tag && <span class="kicker">{tag}</span>}
+      </div>
+    )}
+    <h2 class="slide-title lg" set:html={title.replace(/\n/g, "<br />")} />
+    {sub && (
+      <div class="quote"><p class="lede">{sub}</p></div>
+    )}
+  </div>
+  {src && <SlideMedia slot="aside" src={src} width={800} />}
+</Slide>

@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Entry points offered when a page is missing. The parent link is filled client-side,
+// since a static 404 does not know which URL was requested.
+const shortcuts = [
+  { href: "/", label: "Accueil du wiki", hint: "Catalogue thématique" },
+  { href: "/1-Projects/", label: "Projets", hint: "Initiatives en cours" },
+  { href: "/2-Areas/", label: "Fonctionnement", hint: "Organisation, processus, stratégie" },
+  { href: "/COMPONENTS/", label: "Composants", hint: "Catalogue des blocs MDX" },
+];
+---
+
+<Layout title="Page introuvable">
+  <main class="doc-page">
+    <p class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Erreur 404</p>
+    <h1 class="text-3xl font-semibold text-zinc-900 mb-3">Cette page est introuvable</h1>
+    <p class="text-zinc-600 mb-1">
+      Aucune page ne correspond à <code id="missing-path" class="text-sm bg-alt px-1.5 py-0.5 rounded"></code>.
+    </p>
+
+    <div class="mt-8 border-l-4 border-zinc-900 bg-alt px-5 py-4">
+      <p class="font-semibold text-zinc-900 mb-1">La page vient peut-être d'être créée</p>
+      <p class="text-sm text-zinc-600 m-0">
+        Une page ajoutée par quelqu'un d'autre n'apparaît qu'une fois publiée sur la branche principale.
+        Si elle vient de l'être, votre aperçu est peut-être encore en train de se synchroniser.
+        Réessayez dans quelques instants.
+      </p>
+      <button
+        id="retry"
+        type="button"
+        class="mt-3 text-sm font-medium text-zinc-900 bg-white border border-zinc-300 rounded px-3 py-1.5 cursor-pointer hover:border-zinc-900"
+      >
+        Recharger la page
+      </button>
+    </div>
+
+    <h2 class="text-lg font-semibold text-zinc-900 mt-10 mb-4">Continuer la navigation</h2>
+    <a
+      id="parent-link"
+      href="/"
+      class="hidden mb-4 text-sm text-zinc-700 no-underline hover:text-zinc-900 hover:underline"
+    >
+      ← Remonter au dossier <span id="parent-label" class="font-medium"></span>
+    </a>
+    <ul class="list-none p-0 m-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {shortcuts.map((s) => (
+        <li>
+          <a
+            href={s.href}
+            class="block border border-zinc-200 rounded px-4 py-3 no-underline hover:border-zinc-900 hover:no-underline"
+          >
+            <span class="block font-medium text-zinc-900">{s.label}</span>
+            <span class="block text-sm text-zinc-500">{s.hint}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Layout>
+
+<script>
+  const path = decodeURIComponent(location.pathname);
+  const missing = document.getElementById("missing-path");
+  if (missing) missing.textContent = path;
+
+  document.getElementById("retry")?.addEventListener("click", () => location.reload());
+
+  // Offer the closest parent folder, unless the missing page sits at the root.
+  const segments = location.pathname.split("/").filter(Boolean);
+  if (segments.length > 1) {
+    const parent = "/" + segments.slice(0, -1).join("/") + "/";
+    const link = document.getElementById("parent-link") as HTMLAnchorElement | null;
+    const label = document.getElementById("parent-label");
+    if (link && label) {
+      link.href = parent;
+      label.textContent = decodeURIComponent(segments.slice(0, -1).join(" / "));
+      link.classList.remove("hidden");
+      link.classList.add("inline-block");
+    }
+  }
+</script>

@@ -1,0 +1,27 @@
+---
+// NumberedCards.astro: Two-column grid of numbered cards. Same card as
+// InfoItem, the number standing in for the visual: set large on the right, it
+// places the card without pushing the text aside.
+interface Item {
+  title: string
+  body: string
+}
+interface Props {
+  items: Item[]
+}
+const { items } = Astro.props
+---
+
+<div class="my-6 grid grid-cols-2 gap-3">
+  {items.map((item, i) => (
+    /* A card cut across two pages loses its number or its title, so it moves to
+       the next page whole. A lone card on its last row spans the full width. */
+    <div class="nc-card relative flex break-inside-avoid flex-col gap-2 rounded-sm border border-border bg-surface px-4.5 pt-4.5 pb-4 last:odd:col-span-2">
+      <span class="absolute top-2.5 right-3.5 text-[1.7em] leading-none font-medium tracking-[-0.04em] text-faint tabular-nums">
+        {String(i + 1).padStart(2, '0')}
+      </span>
+      <div class="pr-12 text-[1.05em] leading-snug font-medium tracking-[0.01em] text-ink">{item.title}</div>
+      <div class="text-[1em] leading-relaxed text-ink-soft">{item.body}</div>
+    </div>
+  ))}
+</div>

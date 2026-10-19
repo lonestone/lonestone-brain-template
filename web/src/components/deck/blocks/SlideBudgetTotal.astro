@@ -1,0 +1,14 @@
+---
+// The accent total of a budget column, and the conditions under it.
+interface Props {
+  label?: string;
+  amount: string;
+}
+const { label = "Total HT", amount } = Astro.props;
+const hasNote = Astro.slots.has("default");
+---
+<div class="budget-total">
+  <div class="budget-total-label">{label}</div>
+  <div class="budget-total-value">{amount}</div>
+</div>
+{hasNote && <div class="budget-note"><slot /></div>}

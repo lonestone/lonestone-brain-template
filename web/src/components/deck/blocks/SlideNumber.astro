@@ -1,0 +1,21 @@
+---
+// One entry of a `SlideNumbers` grid: the accent tick, its rank, a title and a
+// paragraph. The rank is written out rather than counted, so a grid can start
+// anywhere.
+interface Props {
+  n: string;
+  title: string;
+}
+const { n, title } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class="number">
+  <div class="stem">
+    <div class="tick"></div>
+    <div class="tally">{n}</div>
+  </div>
+  <div>
+    <div class="number-title">{title}</div>
+    {hasBody && <div class="prose"><slot /></div>}
+  </div>
+</div>

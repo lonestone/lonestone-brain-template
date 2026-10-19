@@ -1,0 +1,56 @@
+---
+// Modal window built on the native <dialog>. It opens from any element whose
+// `data-popin-target` holds its id, and closes on its button, on Escape, or on a click
+// outside the panel. The slot carries the body, markdown included, set in the dense
+// doc-compact scale so that document components fit the panel.
+interface Props {
+  id: string;
+  title: string;
+  subtitle?: string;
+}
+const { id, title, subtitle } = Astro.props;
+---
+
+<dialog
+  id={id}
+  data-popin
+  class="m-auto w-[min(48rem,calc(100vw-2rem))] max-h-[85vh] overflow-hidden rounded-xl border border-border bg-surface p-0 text-ink shadow-none backdrop:bg-ink/40"
+>
+  <div class="flex max-h-[85vh] flex-col">
+    <header class="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
+      <div>
+        <div class="text-lead font-semibold text-ink">{title}</div>
+        {subtitle && <div class="mt-0.5 text-small text-muted">{subtitle}</div>}
+      </div>
+      <button
+        type="button"
+        data-popin-close
+        aria-label="Fermer"
+        class="rounded-md border border-border px-2 py-1 text-small leading-none text-muted transition-colors hover:border-primary/40 hover:text-primary"
+      >
+        ✕
+      </button>
+    </header>
+    <div class="doc-compact overflow-y-auto px-6 py-5">
+      <slot />
+    </div>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+
+    const dialog = target.closest<HTMLDialogElement>("dialog[data-popin]");
+    if (dialog) {
+      // A click on the backdrop lands on the dialog itself, outside its panel.
+      if (target === dialog || target.closest("[data-popin-close]")) dialog.close();
+      return;
+    }
+
+    if (target.closest("a, button, input")) return;
+    const opener = target.closest<HTMLElement>("[data-popin-target]");
+    if (!opener) return;
+    document.getElementById(opener.dataset.popinTarget!)?.closest<HTMLDialogElement>("dialog")?.showModal();
+  });
+</script>

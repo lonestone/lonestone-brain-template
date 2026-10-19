@@ -1,0 +1,56 @@
+---
+import { docImage } from "~/lib/doc-image";
+// Cover of a printable document: visual, title, standfirst, each optional.
+// The visual goes through the image service, like every document visual.
+interface Props {
+  /** Cover visual path, e.g. "/assets/visuels/cube.png". */
+  visual?: string;
+  visualAlt?: string;
+  title?: string;
+  lead?: string;
+}
+const { visual, visualAlt = "", title, lead } = Astro.props;
+const renderedVisual = await docImage(visual, { width: 600 });
+---
+
+<div class="doc-cover mb-30 break-inside-avoid print:mb-0">
+  {renderedVisual && (
+    <figure
+      class:list={[
+        "m-0 flex items-end justify-center overflow-hidden pt-6",
+        /* Breathing room under the visual when the cover also carries a title. */
+        title && "pb-2",
+      ]}
+    >
+      <img src={renderedVisual} alt={visualAlt} class="mx-auto block h-50 w-auto max-w-full object-contain sm:h-70" />
+    </figure>
+  )}
+  {title && (
+    <h1 class="mt-8 mb-0 text-center text-[clamp(36px,5vw,58px)] leading-[1.05] font-medium tracking-[-0.032em] text-balance text-ink">
+      {title}
+    </h1>
+  )}
+  {lead && (
+    <p class="mt-5.5 mb-0 text-center text-lg leading-relaxed text-balance text-ink-soft">{lead}</p>
+  )}
+</div>
+
+<style>
+  /* Full cover: it takes the rest of the first page and centres itself there,
+     the header banner balanced by an equal gap at the foot. From the A4 height
+     we subtract the page margins, the document top padding, then twice the
+     banner. One rounding too many would push the whole cover onto a second page
+     and leave the first empty, so the figure stays conservative. Tailwind has
+     no name for this calculation. */
+  @media print {
+    .doc-cover:has(h1) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: calc(
+        297mm - var(--page-margin) * 2 - 48px - var(--doc-header-height) * 2
+      );
+      margin-bottom: var(--doc-header-height);
+    }
+  }
+</style>

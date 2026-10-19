@@ -1,0 +1,27 @@
+---
+// RiskGrid.astro: Project risks in a grid, rule on top, no card. The first
+// row leans on the rule already drawn by the section heading.
+interface Item {
+  title: string
+  body: string
+}
+interface Props {
+  items: Item[]
+}
+const { items } = Astro.props
+---
+
+<div class="grid grid-cols-1 gap-[22px] md:grid-cols-2 md:gap-x-8 md:gap-y-7">
+  {items.map((item, i) => (
+    <div
+      class:list={[
+        "doc-risk break-inside-avoid border-t border-line pt-3.5",
+        i === 0 && "border-t-0 pt-0",
+        i === 1 && "md:border-t-0 md:pt-0",
+      ]}
+    >
+      <div class="mb-2 text-[15px] leading-snug font-medium text-ink">{item.title}</div>
+      <div class="text-sm leading-relaxed text-ink-soft">{item.body}</div>
+    </div>
+  ))}
+</div>

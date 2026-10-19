@@ -1,0 +1,133 @@
+---
+// One row of a DataTable. A cell is plain text, or an object that stacks, from top to bottom:
+// a bold title, a text (optionally preceded by a small tag), a list of items, a link and a
+// muted note. The link wraps the title (or the text), or becomes a small button when `button`
+// names it; an absolute URL opens in a new tab. A cell with `badge` (tone high, mid or low)
+// or `badgeClass` (any color classes, e.g. a status color) shows its text as a pill instead.
+//
+// Content placed inside the row (markdown included) becomes a detail panel: the row turns
+// clickable and opens it in a Popin titled after its first cell.
+import Popin from "./Popin.astro";
+
+type Tone = "high" | "mid" | "low";
+type Cell =
+  | string
+  | {
+      title?: string;
+      text?: string;
+      tag?: string;
+      items?: string[];
+      note?: string;
+      href?: string;
+      button?: string;
+      badge?: Tone;
+      badgeClass?: string;
+      align?: "left" | "right";
+      muted?: boolean;
+      nowrap?: boolean;
+    };
+
+interface Props {
+  cells: Cell[];
+  /** Value the table's chips filter on, e.g. a score or a status. */
+  group?: string | number;
+  /** Title of the detail panel, the first cell's title by default. */
+  detailTitle?: string;
+  /** Line under the detail panel title. */
+  detailSubtitle?: string;
+  /** Label of the marker shown in the first cell of a row that has a detail panel. */
+  detailLabel?: string;
+}
+const { cells, group, detailTitle, detailSubtitle, detailLabel = "Détail" } = Astro.props;
+
+const toneClass: Record<Tone, string> = {
+  high: "bg-ok-wash text-ok-ink",
+  mid: "bg-brand-soft text-brand-ink",
+  low: "bg-alt text-muted",
+};
+
+const normalized = cells.map((cell) => (typeof cell === "string" ? { text: cell } : cell));
+const search = normalized
+  .map((cell) => [cell.title, cell.text, cell.note, ...(cell.items ?? [])].filter(Boolean).join(" "))
+  .join(" ")
+  .toLowerCase();
+
+const hasDetail = Astro.slots.has("default");
+const first = normalized[0];
+const popinId = hasDetail ? `detail-${Math.random().toString(36).slice(2, 10)}` : undefined;
+
+const isExternal = (href: string) => /^https?:\/\//.test(href);
+const linkClass = "no-underline transition-colors hover:text-primary";
+---
+
+<tr
+  data-row
+  data-group={group !== undefined ? String(group) : undefined}
+  data-search={search}
+  data-popin-target={popinId}
+  class={`transition-colors hover:bg-stripe ${hasDetail ? "cursor-pointer" : ""}`}
+>
+  {normalized.map((cell, index) => {
+    const linkOn = cell.href && !cell.button ? (cell.title ? "title" : "text") : null;
+    const target = cell.href && isExternal(cell.href) ? { target: "_blank", rel: "noopener" } : {};
+    return (
+      <td
+        class:list={[
+          "px-4 py-3 align-top leading-snug",
+          cell.align === "right" ? "text-right" : "text-left",
+          cell.muted ? "text-muted" : "text-ink-soft",
+          cell.nowrap && "whitespace-nowrap",
+        ]}
+      >
+        {cell.badge || cell.badgeClass ? (
+          <span class={`inline-block rounded px-2 py-0.5 text-micro font-semibold tabular-nums ${cell.badgeClass ?? toneClass[cell.badge!]}`}>
+            {cell.text}
+          </span>
+        ) : (
+          <>
+            {cell.title && (
+              <div class="font-semibold text-ink">
+                {linkOn === "title" ? <a href={cell.href} {...target} class={`text-ink ${linkClass}`}>{cell.title}</a> : cell.title}
+              </div>
+            )}
+            {cell.text && (
+              <div class={cell.title ? "mt-0.5" : undefined}>
+                {cell.tag && (
+                  <span class="mr-1.5 inline-flex items-center rounded-full border border-border bg-alt px-1.5 text-micro font-medium text-muted">{cell.tag}</span>
+                )}
+                {linkOn === "text" ? (
+                  <a href={cell.href} {...target} class={`text-ink-soft underline decoration-line underline-offset-2 ${linkClass}`}>{cell.text}</a>
+                ) : (
+                  cell.text
+                )}
+              </div>
+            )}
+            {cell.items && cell.items.length > 0 && (
+              <ul class="m-0 list-none space-y-0.5 p-0">
+                {cell.items.map((item) => <li class="line-clamp-1 text-micro">{item}</li>)}
+              </ul>
+            )}
+          </>
+        )}
+        {cell.href && cell.button && (
+          <a
+            href={cell.href}
+            {...target}
+            class:list={[(cell.title || cell.text || cell.items) && "mt-1.5", "inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 text-micro font-medium text-ink-soft no-underline transition-colors hover:border-primary/40 hover:text-primary"]}
+          >
+            {cell.button} <span aria-hidden="true">{isExternal(cell.href) ? "↗" : "→"}</span>
+          </a>
+        )}
+        {cell.note && <div class="mt-1 text-micro text-muted">{cell.note}</div>}
+        {index === 0 && hasDetail && (
+          <>
+            <div class="mt-1.5 inline-block rounded bg-brand-soft px-1.5 py-0.5 text-micro font-medium text-brand-ink">{detailLabel}</div>
+            <Popin id={popinId!} title={detailTitle ?? first.title ?? first.text ?? ""} subtitle={detailSubtitle}>
+              <slot />
+            </Popin>
+          </>
+        )}
+      </td>
+    );
+  })}
+</tr>

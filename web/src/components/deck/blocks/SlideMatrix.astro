@@ -1,0 +1,28 @@
+---
+// A comparison grid: a first column of keys, then one column per option. The
+// column named by `invert` is set on ink, which is how the deck marks the
+// option under discussion.
+interface Props {
+  /** Column widths, e.g. "300px 1fr 1fr". */
+  cols?: string;
+  /** Column headings, the first being the key column's. */
+  head: string[];
+  /** Cells read row by row, the first of each row being its key. */
+  rows: string[][];
+  /** Index in `head` of the column set on ink, counted from zero. */
+  invert?: number;
+}
+const { cols = "300px 1fr 1fr", head, rows, invert } = Astro.props;
+---
+<div class="matrix" style={`--matrix-cols:${cols}`}>
+  <div class="matrix-head">
+    {head.map((cell, i) => <div class:list={{ "tone-ink": i === invert }}>{cell}</div>)}
+  </div>
+  <div class="matrix-grid">
+    {rows.map((row) =>
+      row.map((cell, i) => (
+        <div class:list={[{ "matrix-key": i === 0, "tone-ink": i === invert }]}>{cell}</div>
+      )),
+    )}
+  </div>
+</div>

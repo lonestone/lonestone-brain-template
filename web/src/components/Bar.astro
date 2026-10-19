@@ -1,0 +1,35 @@
+---
+// Bar.astro: One row of a BarChart: label, bar scaled on the chart's `max`, value.
+// `highlight` sets the row the reader should find first in ink, the others stay grey.
+interface Props {
+  label: string
+  value: number
+  /** Value as printed, when it differs from the number (unit, rounding, "5/5"). */
+  display?: string
+  /** Short complement printed after the value, such as a trend. */
+  note?: string
+  highlight?: boolean
+}
+const { label, value, display, note, highlight = false } = Astro.props
+const shown = display ?? value.toLocaleString('fr-FR')
+---
+
+<div
+  class="grid grid-cols-[minmax(0,8rem)_1fr_4.5rem] items-center gap-3 text-small sm:grid-cols-[minmax(0,14rem)_1fr_16rem]"
+  title={`${label} : ${shown}${note ? ` (${note})` : ''}`}
+>
+  <span class:list={['truncate', highlight ? 'font-semibold text-ink' : 'text-ink-soft']}>{label}</span>
+  <span class="h-3 rounded-sm bg-alt">
+    <span
+      class:list={[
+        'block h-full w-[calc(100%*var(--bar-value)/var(--bar-max))] min-w-0.5 rounded-sm print:[print-color-adjust:exact]',
+        highlight ? 'bg-ink' : 'bg-faint',
+      ]}
+      style={`--bar-value: ${value}`}
+    />
+  </span>
+  <span class="truncate whitespace-nowrap tabular-nums">
+    <span class:list={[highlight ? 'font-semibold text-ink' : 'text-ink-soft']}>{shown}</span>
+    {note && <span class="ml-1.5 hidden text-micro text-muted sm:inline">{note}</span>}
+  </span>
+</div>

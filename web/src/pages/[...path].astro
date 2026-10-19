@@ -1,0 +1,26 @@
+---
+// The wiki's only page route. Every page is served at its repo path; which component draws it
+// comes from `src/renderers/`, whose tree mirrors the content tree.
+import { listWikiPageIds } from "~/lib/wiki-fs";
+import { urlPath } from "~/lib/wiki";
+import { resolveRenderer, variantsFor } from "~/lib/renderers";
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const { id, isFolder } of listWikiPageIds()) {
+    paths.push({ params: { path: urlPath(id) }, props: { id, isFolder, variant: null } });
+    for (const variant of await variantsFor(id, isFolder)) {
+      paths.push({
+        params: { path: `${urlPath(id)}/${variant}` },
+        props: { id, isFolder, variant },
+      });
+    }
+  }
+  return paths;
+}
+
+const { id, isFolder, variant } = Astro.props;
+const { component: Renderer, params } = resolveRenderer(id, isFolder, variant ?? undefined);
+---
+
+<Renderer id={id} isFolder={isFolder} params={params} />

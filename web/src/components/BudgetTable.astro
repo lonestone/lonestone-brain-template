@@ -1,0 +1,84 @@
+---
+// BudgetTable.astro: Costing table, one row per profile, module or epic, with
+// its load in days, its amount excl. VAT and a total computed from the rows.
+// A row in `days` is priced at its own `rate`, or at the table `dayRate`; an
+// `amount` sets the price outright, and a row without `days` reads as a fixed
+// price. The Jours column appears as soon as one row has days, the TJM column
+// as soon as one row sets its own rate.
+interface Row {
+  label: string
+  days?: number
+  rate?: number
+  amount?: number
+}
+interface Props {
+  title?: string
+  /** Heading of the first column, a profile by default. */
+  firstColumn?: string
+  /** Day rate applied to the rows that set neither `rate` nor `amount`. */
+  dayRate?: number
+  totalLabel?: string
+  rows: Row[]
+}
+const { title, firstColumn = 'Profil', dayRate, totalLabel = 'Total', rows } = Astro.props
+
+const priced = rows.map((row) => {
+  const rate = row.rate ?? dayRate
+  if (row.amount === undefined && (row.days === undefined || rate === undefined)) {
+    throw new Error(`BudgetTable: row "${row.label}" needs an amount, or days and a day rate`)
+  }
+  return { ...row, rate, total: row.amount ?? row.days! * rate! }
+})
+const showDays = rows.some((r) => r.days !== undefined)
+const showRate = rows.some((r) => r.rate !== undefined)
+const totalDays = rows.reduce((s, r) => s + (r.days ?? 0), 0)
+const totalAmount = priced.reduce((s, r) => s + r.total, 0)
+
+const euros = (n: number) =>
+  new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n) + ' €'
+const count = (n: number) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(n)
+
+const head = 'px-4 py-2.5 text-micro font-semibold text-ink-soft bg-alt border-b border-border'
+const cell = 'px-4 py-2.5 border-b border-border text-ink'
+const foot = 'px-4 py-2.5 border-t border-line font-semibold text-ink'
+const num = 'text-right tabular-nums whitespace-nowrap'
+---
+<div class="my-5 overflow-hidden rounded-lg border border-border text-small">
+  {title && (
+    <p class="m-0 border-b border-border bg-alt px-4 py-2.5 text-micro font-medium tracking-[0.07em] text-muted uppercase">
+      {title}
+    </p>
+  )}
+  <table class="w-full border-collapse">
+    <thead>
+      <tr>
+        <th class:list={[head, 'text-left']}>{firstColumn}</th>
+        {showDays && <th class:list={[head, num, 'w-20']}>Jours</th>}
+        {showRate && <th class:list={[head, num, 'w-24']}>TJM HT</th>}
+        <th class:list={[head, num, 'w-28']}>Montant HT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {priced.map((row) => (
+        <tr class="even:bg-stripe">
+          <td class={cell}>{row.label}</td>
+          {showDays && (
+            <td class:list={[cell, num, row.days === undefined && 'text-muted']}>
+              {row.days === undefined ? 'Forfait' : count(row.days)}
+            </td>
+          )}
+          {showRate && (
+            <td class:list={[cell, num]}>{row.days !== undefined && row.rate !== undefined ? euros(row.rate) : ''}</td>
+          )}
+          <td class:list={[cell, num]}>{euros(row.total)}</td>
+        </tr>
+      ))}
+      <tr class="bg-alt">
+        <td class:list={[foot, 'uppercase']}>{totalLabel}</td>
+        {showDays && <td class:list={[foot, num]}>{count(totalDays)}</td>}
+        {showRate && <td class={foot}></td>}
+        <td class:list={[foot, num]}>{euros(totalAmount)}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

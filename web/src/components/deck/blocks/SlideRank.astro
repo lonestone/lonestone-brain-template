@@ -1,0 +1,17 @@
+---
+// One row of a `SlideRanks` list.
+interface Props {
+  n: string;
+  title: string;
+}
+const { n, title } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class="rank">
+  <div>
+    <div class="tick"></div>
+    <div class="rank-num">{n}</div>
+  </div>
+  <div class="rank-title">{title}</div>
+  {hasBody && <div class="prose"><slot /></div>}
+</div>

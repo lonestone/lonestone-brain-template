@@ -1,0 +1,1486 @@
+/*
+ * Deck identity.
+ *
+ * Three surfaces, one sans-serif, one accent. Every slide is a 1920×1080
+ * section that sets its surface once; the blocks inside read `--on-surface`,
+ * `--rule` and `--muted` from it, so the same block renders on paper, on ink
+ * or on accent without a variant of its own.
+ *
+ * Scoped under `body.deck`: the wiki's single route bundles every renderer,
+ * so an unscoped rule here would reach every page of the site.
+ */
+
+body.deck {
+  /* Palette */
+  --deck-paper: #f5f4f0;
+  --deck-ink: #18181b;
+  --deck-accent: #fff056;
+  --deck-alert: #a8332b;
+  --deck-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Type scale */
+  --deck-chrome: 15px;
+  --deck-label: 17px;
+  --deck-kicker: 19px;
+  --deck-note: 21px;
+  --deck-body: 22px;
+  --deck-lead: 26px;
+  --deck-item: 29px;
+  --deck-card: 34px;
+  --deck-tally: 38px;
+  --deck-h2: 62px;
+  --deck-figure: 76px;
+  --deck-h1: 100px;
+  --deck-display: 146px;
+
+  /* Frame */
+  --deck-gutter: 96px;
+  --deck-top: 56px;
+  --deck-bottom: 72px;
+  --deck-tick: 4px;
+  --deck-seam: 2px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body.deck {
+  background: var(--deck-ink);
+  font-family: var(--deck-sans);
+  color: var(--deck-ink);
+}
+body.deck * {
+  box-sizing: border-box;
+}
+body.deck deck-stage {
+  --deck-bg: var(--deck-ink);
+}
+body.deck deck-stage:not(:defined) {
+  visibility: hidden;
+}
+
+/* ─────────────────────────── Surfaces ─────────────────────────── */
+
+body.deck section.slide {
+  --surface: var(--deck-paper);
+  --on-surface: var(--deck-ink);
+  --rule: rgb(24 24 27 / 0.16);
+  --hairline: rgb(24 24 27 / 0.12);
+  --muted: rgb(24 24 27 / 0.55);
+  --dim: rgb(24 24 27 / 0.82);
+  --mark: var(--deck-ink);
+  --inset: rgb(24 24 27 / 0.04);
+
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  display: flex;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--deck-sans);
+}
+
+/* `.green` is the name the decks written before this identity use for a dark slide. */
+body.deck section.slide.on-ink,
+body.deck section.slide.green {
+  --surface: var(--deck-ink);
+  --on-surface: var(--deck-paper);
+  --rule: rgb(245 244 240 / 0.18);
+  --hairline: rgb(245 244 240 / 0.14);
+  --muted: rgb(245 244 240 / 0.55);
+  --dim: rgb(245 244 240 / 0.8);
+  --mark: var(--deck-accent);
+  --inset: rgb(245 244 240 / 0.06);
+}
+
+body.deck section.slide.on-accent {
+  --surface: var(--deck-accent);
+  --on-surface: var(--deck-ink);
+  --rule: rgb(24 24 27 / 0.3);
+  --hairline: rgb(24 24 27 / 0.25);
+  --muted: rgb(24 24 27 / 0.6);
+  --dim: rgb(24 24 27 / 0.86);
+  --mark: var(--deck-ink);
+  --inset: rgb(24 24 27 / 0.06);
+}
+
+/* A block that inverts against its surface: the dark card in a light row. */
+body.deck .tone-ink {
+  --surface: var(--deck-ink);
+  --on-surface: var(--deck-paper);
+  --rule: rgb(245 244 240 / 0.18);
+  --hairline: rgb(245 244 240 / 0.14);
+  --muted: rgb(245 244 240 / 0.6);
+  --dim: rgb(245 244 240 / 0.8);
+  --mark: var(--deck-accent);
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+body.deck .tone-accent {
+  --surface: var(--deck-accent);
+  --on-surface: var(--deck-ink);
+  --rule: rgb(24 24 27 / 0.3);
+  --muted: rgb(24 24 27 / 0.6);
+  --dim: rgb(24 24 27 / 0.86);
+  --mark: var(--deck-ink);
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+/* ─────────────────────────── Frame ─────────────────────────── */
+
+body.deck .slide-frame {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--deck-top) var(--deck-gutter) var(--deck-bottom);
+}
+/* A slide whose media bleeds to an edge pads its text panel only. */
+body.deck section.slide.split > .slide-frame {
+  padding-right: 72px;
+}
+/* A slide whose body runs edge to edge: the chrome and the closing line keep
+   the gutter, the block between them does not. */
+body.deck section.slide.bleed > .slide-frame {
+  padding: 0;
+}
+body.deck section.slide.bleed .chrome {
+  margin: var(--deck-top) var(--deck-gutter) 0;
+}
+body.deck .slide-inset {
+  padding-left: var(--deck-gutter);
+  padding-right: var(--deck-gutter);
+}
+/* The body fills what the header leaves, and centres when asked to. */
+body.deck .slide-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.deck .slide-body.centered {
+  justify-content: center;
+  gap: 44px;
+}
+/* Framed between two rules, when the block sits among others on the slide. */
+body.deck .slide-body.centered.ruled {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 40px 0;
+  gap: 22px;
+}
+
+body.deck .chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--deck-chrome);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: none;
+}
+body.deck .chrome .mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+body.deck .chrome .dot {
+  width: 9px;
+  height: 9px;
+  background: var(--mark);
+  display: block;
+  flex: none;
+}
+
+/* ─────────────────────────── Typography ─────────────────────────── */
+
+body.deck .kicker {
+  font-size: var(--deck-kicker);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+body.deck .slide-title {
+  font-weight: 700;
+  font-size: var(--deck-h2);
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  margin: 0;
+}
+body.deck .slide-title.lg {
+  font-size: var(--deck-h1);
+  line-height: 1;
+  letter-spacing: -0.032em;
+}
+body.deck .slide-title.sm {
+  font-size: 48px;
+}
+body.deck .lede {
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--dim);
+  margin: 0;
+}
+body.deck .prose {
+  font-size: var(--deck-note);
+  line-height: 1.5;
+  color: var(--dim);
+  margin: 0;
+}
+body.deck .tick {
+  height: var(--deck-tick);
+  width: 56px;
+  background: var(--deck-accent);
+  flex: none;
+}
+body.deck .tally {
+  font-size: var(--deck-tally);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* MDX wraps a slot's text in its own paragraph, so every text block of the deck
+   is a div that neutralises the margins of the paragraphs it receives. */
+body.deck .prose p,
+body.deck .quote p,
+body.deck .band p,
+body.deck .footnote p,
+body.deck .budget-note p {
+  margin: 0;
+}
+body.deck .prose p + p,
+body.deck .footnote p + p {
+  margin-top: 0.6em;
+}
+
+/* The `md` class gives document paragraphs the ink colour. In a deck, a slot's
+   paragraph takes the colour of its block instead, so it stays legible on ink. */
+body.deck p.md {
+  color: inherit;
+}
+
+/* Accent-barred paragraph, the deck's way of holding a key sentence. */
+body.deck .quote {
+  border-left: var(--deck-tick) solid var(--deck-accent);
+  padding-left: 36px;
+}
+body.deck .quote p {
+  margin: 0;
+}
+
+/* ─────────────────────────── Header band ─────────────────────────── */
+
+body.deck .slide-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 56px;
+  padding: 36px 0 30px;
+  flex: none;
+}
+body.deck .slide-head .headline {
+  flex: 1;
+  min-width: 0;
+}
+body.deck .slide-head .kicker {
+  display: block;
+  margin-bottom: 14px;
+}
+body.deck .slide-aside {
+  font-size: var(--deck-kicker);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: right;
+  padding-bottom: 10px;
+  flex: none;
+}
+body.deck .price-badge {
+  background: var(--deck-accent);
+  color: var(--deck-ink);
+  padding: 22px 32px;
+  text-align: right;
+  flex: none;
+}
+body.deck .price-badge .price-label {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+body.deck .price-badge .price-value {
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* ─────────────────────────── Numbered grid ─────────────────────────── */
+
+body.deck .numbers {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+body.deck .numbers.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+body.deck .numbers.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .numbers.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+body.deck .number {
+  min-height: 0;
+  display: flex;
+  gap: 32px;
+  padding: 30px 56px 30px 0;
+}
+body.deck .numbers.cols-3 .number,
+body.deck .numbers.cols-4 .number {
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px 36px 32px 0;
+}
+/* Interior seams: a left rule on every item that is not in the first column,
+   a bottom rule on every item that is not in the last row. */
+body.deck .numbers.cols-2 .number:nth-child(2n) {
+  border-left: 1px solid var(--rule);
+  padding: 30px 0 30px 56px;
+}
+body.deck .numbers.cols-3 .number:not(:nth-child(3n + 1)),
+body.deck .numbers.cols-4 .number:not(:nth-child(4n + 1)) {
+  border-left: 1px solid var(--rule);
+  padding-left: 36px;
+}
+body.deck .numbers.cols-3 .number:nth-child(3n),
+body.deck .numbers.cols-4 .number:nth-child(4n) {
+  padding-right: 0;
+}
+body.deck .numbers.cols-2 .number:not(:nth-last-child(-n + 2)),
+body.deck .numbers.cols-3 .number:not(:nth-last-child(-n + 3)),
+body.deck .numbers.cols-4 .number:not(:nth-last-child(-n + 4)) {
+  border-bottom: 1px solid var(--rule);
+}
+body.deck .number .stem {
+  flex: none;
+  width: 56px;
+}
+body.deck .number .stem .tick {
+  width: 100%;
+  margin-bottom: 10px;
+}
+body.deck .numbers.cols-3 .number .stem,
+body.deck .numbers.cols-4 .number .stem {
+  width: auto;
+  display: contents;
+}
+body.deck .numbers.cols-3 .number .stem .tick,
+body.deck .numbers.cols-4 .number .stem .tick {
+  width: 52px;
+  margin-bottom: 0;
+}
+body.deck .number .number-title {
+  font-size: var(--deck-item);
+  font-weight: 600;
+  line-height: 1.24;
+  margin-bottom: 10px;
+}
+body.deck .numbers.cols-3 .number .number-title,
+body.deck .numbers.cols-4 .number .number-title {
+  font-size: 28px;
+  margin-bottom: 0;
+}
+
+/* ─────────────────────────── Figures ─────────────────────────── */
+
+body.deck .figures {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--rule);
+}
+body.deck .figures.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .figure-item {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 64px 40px 0;
+}
+body.deck .figures.cols-2 .figure-item:nth-child(2n),
+body.deck .figures.cols-3 .figure-item:not(:nth-child(3n + 1)) {
+  border-left: 1px solid var(--rule);
+  padding-left: 64px;
+}
+body.deck .figures.cols-2 .figure-item:nth-child(2n) {
+  padding-right: 0;
+}
+body.deck .figures.cols-2 .figure-item:not(:nth-last-child(-n + 2)),
+body.deck .figures.cols-3 .figure-item:not(:nth-last-child(-n + 3)) {
+  border-bottom: 1px solid var(--rule);
+}
+body.deck .figure-item .figure-value {
+  font-size: var(--deck-figure);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+body.deck .figure-item .prose {
+  font-size: 27px;
+  line-height: 1.45;
+  color: var(--dim);
+  max-width: 660px;
+}
+
+/* ─────────────────────────── Panels ─────────────────────────── */
+
+body.deck .panels {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: var(--deck-seam);
+  background: var(--rule);
+}
+body.deck .panels.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+body.deck .panels.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .panels.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+body.deck .panel {
+  background: var(--surface);
+  color: var(--on-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 34px 36px;
+  min-width: 0;
+}
+body.deck .panel .panel-title {
+  font-size: var(--deck-card);
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+}
+body.deck .panel .panel-lead {
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+body.deck .panel .prose {
+  font-size: var(--deck-body);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────── Tiles ─────────────────────────── */
+
+body.deck .tiles {
+  display: grid;
+  gap: var(--deck-seam);
+  background: var(--rule);
+  flex: none;
+}
+body.deck .tiles.fill {
+  flex: 1;
+  min-height: 0;
+}
+body.deck .tiles.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+body.deck .tiles.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .tiles.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+body.deck .tile {
+  background: var(--surface);
+  color: var(--on-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 26px 32px;
+  min-width: 0;
+}
+body.deck .tile .tile-label {
+  font-size: var(--deck-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+body.deck .tile .tile-value {
+  font-size: 31px;
+  font-weight: 600;
+  line-height: 1.24;
+}
+body.deck .tile .tile-value.big {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+body.deck .tile .prose {
+  font-size: var(--deck-body);
+  line-height: 1.4;
+}
+
+/* ─────────────────────────── Data table ─────────────────────────── */
+
+body.deck .dtable {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.deck .dtable-head,
+body.deck .dtable-row,
+body.deck .dtable-total {
+  display: grid;
+  grid-template-columns: var(--dtable-cols, 1fr 140px 200px);
+  gap: 32px;
+  align-items: baseline;
+}
+body.deck .dtable-head {
+  border-bottom: 3px solid var(--on-surface);
+  padding-bottom: 12px;
+  font-size: var(--deck-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: none;
+}
+body.deck .dtable-rows {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+body.deck .dtable-row {
+  border-bottom: 1px solid var(--hairline);
+  padding: 15px 0;
+}
+body.deck .dtable-row:last-child {
+  border-bottom: none;
+}
+body.deck .dtable-row .cell-key {
+  font-size: 24px;
+  font-weight: 500;
+}
+body.deck .dtable-row .cell-key small {
+  display: block;
+  font-size: var(--deck-kicker);
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 8px;
+}
+body.deck .dtable-row .cell {
+  font-size: var(--deck-note);
+  line-height: 1.45;
+  color: var(--dim);
+}
+body.deck .dtable-row .cell-num {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: right;
+  letter-spacing: -0.02em;
+}
+body.deck .dtable-row .cell-num.soft {
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--dim);
+}
+body.deck .dtable-total {
+  background: var(--deck-accent);
+  color: var(--deck-ink);
+  align-items: center;
+  padding: 22px 0;
+  margin-top: 8px;
+  flex: none;
+}
+body.deck .dtable-total .cell-key {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-left: 28px;
+}
+body.deck .dtable-total .cell-num {
+  font-size: 30px;
+  font-weight: 700;
+  text-align: right;
+}
+body.deck .dtable-total .cell-num:last-child {
+  font-size: var(--deck-tally);
+  letter-spacing: -0.025em;
+  padding-right: 28px;
+}
+
+/* ─────────────────────────── Ranked rows ─────────────────────────── */
+
+body.deck .ranks {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--rule);
+}
+body.deck .rank {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 72px 1fr 1.25fr;
+  gap: 40px;
+  align-items: center;
+  border-bottom: 1px solid var(--hairline);
+  padding: 16px 0;
+}
+body.deck .rank:last-child {
+  border-bottom: none;
+}
+body.deck .rank .tick {
+  width: 100%;
+  margin-bottom: 10px;
+}
+body.deck .rank .rank-num {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+}
+body.deck .rank .rank-title {
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+/* Five rows is the usual count, so the row's prose sits a notch under the
+   default: it is a mitigation, not the slide's argument. */
+body.deck .rank .prose {
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+/* Wide variant: one statement per row, no mitigation column. */
+body.deck .ranks.wide .rank {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  border-bottom-color: var(--rule);
+}
+body.deck .ranks.wide .rank .rank-num {
+  font-size: 40px;
+  width: 64px;
+  flex: none;
+}
+body.deck .ranks.wide .rank .rank-title {
+  font-size: var(--deck-tally);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ─────────────────────────── Matrix ─────────────────────────── */
+
+body.deck .matrix {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.deck .matrix-head,
+body.deck .matrix-grid {
+  display: grid;
+  grid-template-columns: var(--matrix-cols, 300px 1fr 1fr);
+  gap: var(--deck-seam);
+  background: var(--rule);
+}
+body.deck .matrix-grid {
+  flex: 1;
+  min-height: 0;
+  grid-auto-rows: 1fr;
+}
+body.deck .matrix-head > * {
+  background: var(--surface);
+  color: var(--on-surface);
+  padding: 16px 28px;
+  font-size: var(--deck-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+body.deck .matrix-head > .tone-ink {
+  color: var(--deck-accent);
+}
+body.deck .matrix-grid > * {
+  background: var(--surface);
+  color: var(--on-surface);
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  font-size: var(--deck-note);
+  line-height: 1.45;
+}
+body.deck .matrix-grid > .matrix-key {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+/* ─────────────────────────── Step chain ─────────────────────────── */
+
+body.deck .chain {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 34px 0;
+}
+body.deck .chain-step {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px 28px;
+  border-top: 2px solid var(--rule);
+}
+body.deck .chain-step.anchor {
+  border-top-width: 6px;
+  border-top-color: var(--on-surface);
+  background: var(--inset);
+}
+body.deck .chain-step.pending {
+  border-top-style: dashed;
+}
+body.deck .chain-step.tone-accent {
+  border-top-width: 6px;
+  border-top-color: var(--deck-ink);
+}
+body.deck .chain-step.tone-ink {
+  border-top-width: 6px;
+  border-top-color: var(--deck-accent);
+}
+body.deck .chain-step .chain-label {
+  font-size: var(--deck-chrome);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+body.deck .chain-step .chain-title {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+body.deck .chain-step.anchor .chain-title,
+body.deck .chain-step.tone-accent .chain-title,
+body.deck .chain-step.tone-ink .chain-title {
+  font-weight: 700;
+}
+body.deck .chain-step .chain-detail {
+  font-size: var(--deck-note);
+  line-height: 1.35;
+  color: var(--dim);
+}
+body.deck .chain-arrow {
+  width: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--deck-lead);
+  color: var(--muted);
+}
+
+/* ─────────────────────────── Band ─────────────────────────── */
+
+body.deck .band {
+  background: var(--deck-accent);
+  color: var(--deck-ink);
+  display: grid;
+  gap: 48px;
+  padding: 28px 40px;
+  margin-top: 26px;
+  flex: none;
+}
+body.deck .band.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+body.deck .band.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .band-item {
+  display: flex;
+  gap: 18px;
+}
+body.deck .band-item::before {
+  content: "—";
+  font-weight: 600;
+  font-size: 23px;
+  flex: none;
+}
+body.deck .band-item p {
+  font-size: 23px;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+/* Single-statement variant: a label, a sentence and a figure on the right. */
+body.deck .band.headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 56px;
+}
+body.deck .band .band-label {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+body.deck .band .band-figure {
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  flex: none;
+}
+
+/* ─────────────────────────── Footnotes ─────────────────────────── */
+
+body.deck .footnotes {
+  display: grid;
+  gap: 48px;
+  padding-top: 30px;
+  flex: none;
+}
+body.deck .footnotes.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+body.deck .footnotes.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.deck .footnote {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+body.deck .footnote .tick {
+  width: 48px;
+}
+body.deck .footnote .footnote-title {
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.24;
+}
+body.deck .footnote p {
+  font-size: var(--deck-body);
+  line-height: 1.5;
+  color: var(--dim);
+  margin: 0;
+}
+
+/* ─────────────────────────── Split slide ─────────────────────────── */
+
+body.deck section.slide.split {
+  flex-direction: row;
+}
+/* With a bleeding image the text panel is fixed, with a small emblem it is not. */
+body.deck section.slide.split.has-media > .slide-frame {
+  width: 1180px;
+  flex: none;
+}
+body.deck .split-media {
+  flex: 1;
+  min-width: 0;
+  background: var(--deck-ink);
+  overflow: hidden;
+}
+body.deck .split-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.15) contrast(1.05);
+}
+body.deck .split-aside {
+  width: 560px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 72px;
+}
+body.deck .split-aside img {
+  width: 400px;
+  height: auto;
+  display: block;
+}
+body.deck .slide-foot {
+  display: flex;
+  gap: 56px;
+  border-top: 1px solid var(--rule);
+  padding-top: 28px;
+  font-size: var(--deck-label);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: none;
+}
+
+/* ─────────────────────────── Cover ─────────────────────────── */
+
+body.deck .cover-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+body.deck .cover-body .kicker {
+  font-size: var(--deck-body);
+  color: var(--deck-accent);
+}
+body.deck section.slide:not(.on-ink) .cover-body .kicker {
+  color: var(--muted);
+}
+body.deck .cover-title {
+  font-weight: 700;
+  font-size: var(--deck-display);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin: 0;
+  max-width: 1520px;
+}
+body.deck .cover-lede {
+  font-size: 38px;
+  font-weight: 300;
+  line-height: 1.42;
+  color: var(--dim);
+  max-width: 1280px;
+  margin: 0;
+}
+body.deck .cover-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 64px;
+  border-top: 3px solid var(--deck-accent);
+  padding-top: 32px;
+  flex: none;
+}
+body.deck .cover-meta .meta-key {
+  font-size: var(--deck-chrome);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+body.deck .cover-meta .meta-value {
+  font-size: 27px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ─────────────────────────── Part divider ─────────────────────────── */
+
+body.deck .part-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+}
+body.deck .part-index {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+}
+body.deck .part-index .part-num {
+  font-size: 132px;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--deck-accent);
+}
+body.deck section.slide:not(.on-ink) .part-index .part-num {
+  color: var(--on-surface);
+}
+body.deck .part-index .kicker {
+  font-size: var(--deck-body);
+}
+
+/* ─────────────────────────── Statement ─────────────────────────── */
+
+body.deck .statement {
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0;
+  max-width: 1650px;
+}
+body.deck .statement-sub {
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.44;
+  margin: 0;
+  max-width: 1420px;
+}
+/* Sentence-length enjeu, set below the statement scale. */
+body.deck .enjeu {
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.018em;
+  margin: 0;
+  max-width: 1680px;
+}
+
+/* ─────────────────────────── Team strip ─────────────────────────── */
+
+body.deck .team-strip {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: var(--deck-seam);
+  background: var(--rule);
+}
+body.deck .team-member {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+}
+body.deck .team-member img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  object-position: 50% 25%;
+  filter: grayscale(1) contrast(1.05);
+  display: block;
+}
+body.deck .team-member .team-card {
+  padding: 18px 20px 22px;
+  border-top: var(--deck-tick) solid var(--rule);
+  height: 158px;
+  flex: none;
+}
+body.deck .team-member.lead .team-card {
+  border-top-color: var(--deck-accent);
+}
+body.deck .team-member .team-name {
+  font-size: var(--deck-body);
+  font-weight: 700;
+  line-height: 1.2;
+}
+body.deck .team-member .team-role {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--deck-accent);
+  margin: 8px 0 10px;
+}
+body.deck section.slide:not(.on-ink) .team-member .team-role {
+  color: var(--muted);
+}
+body.deck .team-member .team-detail {
+  font-size: var(--deck-label);
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* ─────────────────────────── Budget columns ─────────────────────────── */
+
+body.deck .budget {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 56px;
+}
+body.deck .budget-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+body.deck .budget-col > .tile-label {
+  font-size: var(--deck-kicker);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+body.deck .budget-line {
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 40px;
+  padding: 24px 0;
+}
+body.deck .budget-line:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+body.deck .budget-line .budget-label {
+  font-size: var(--deck-lead);
+  font-weight: 500;
+  line-height: 1.3;
+}
+body.deck .budget-line .budget-detail {
+  font-size: var(--deck-kicker);
+  color: var(--muted);
+  margin-top: 8px;
+}
+body.deck .budget-line .budget-amount {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--dim);
+}
+body.deck .budget-total {
+  flex: none;
+  background: var(--deck-accent);
+  color: var(--deck-ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  padding: 30px 36px;
+  margin-top: 24px;
+}
+body.deck .budget-total .budget-total-label {
+  font-size: var(--deck-body);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+body.deck .budget-total .budget-total-value {
+  font-size: 80px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+body.deck .budget-note {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 20px 0 0;
+}
+body.deck .budget-option {
+  border-top: 1px solid var(--rule);
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body.deck .budget-option:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+body.deck .budget-option .budget-label {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.32;
+}
+body.deck .budget-option .budget-amount {
+  font-size: var(--deck-lead);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 6px;
+  color: var(--dim);
+}
+body.deck .budget-aside {
+  padding: 26px 30px;
+  margin-top: auto;
+  flex: none;
+}
+body.deck .budget-aside .tile-label {
+  font-size: var(--deck-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--deck-accent);
+  margin-bottom: 12px;
+}
+body.deck .budget-aside .budget-aside-value {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+body.deck .budget-aside .prose {
+  font-size: var(--deck-kicker);
+  margin-top: 8px;
+}
+
+/* ─────────────────────────── Gantt ─────────────────────────── */
+
+body.deck .gantt-chart {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.deck .gantt-scale {
+  display: flex;
+  padding-left: var(--gantt-names, 400px);
+  border-bottom: 3px solid var(--on-surface);
+  padding-bottom: 12px;
+  font-size: var(--deck-kicker);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: none;
+}
+body.deck .gantt-scale span {
+  flex: 1;
+  text-align: center;
+}
+body.deck .gantt-scale span:not(:first-child) {
+  border-left: 1px solid var(--rule);
+}
+body.deck .gantt-lanes {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+body.deck .gantt-lane {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--hairline);
+  padding: 12px 0;
+}
+body.deck .gantt-lane:last-child {
+  border-bottom: none;
+}
+body.deck .gantt-name {
+  width: var(--gantt-names, 400px);
+  flex: none;
+  font-size: 25px;
+  font-weight: 600;
+  padding-right: 32px;
+}
+body.deck .gantt-track {
+  flex: 1;
+  position: relative;
+  min-height: 56px;
+}
+body.deck .gantt-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.3;
+  background: var(--deck-accent);
+  color: var(--deck-ink);
+}
+body.deck .gantt-bar.ink {
+  background: var(--deck-ink);
+  color: var(--deck-paper);
+}
+body.deck .gantt-bar.soft {
+  background: rgb(24 24 27 / 0.85);
+  color: var(--deck-paper);
+}
+body.deck .gantt-bar.client {
+  background: transparent;
+  border: 2px dashed rgb(24 24 27 / 0.42);
+  color: var(--dim);
+}
+body.deck .gantt-bar.alert {
+  background: var(--deck-alert);
+  color: var(--deck-paper);
+}
+body.deck .gantt-bar.alert-soft {
+  background: rgb(168 51 43 / 0.12);
+  border: 1px solid rgb(168 51 43 / 0.4);
+  color: var(--deck-alert);
+}
+body.deck .gantt-legend {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+  flex: none;
+}
+body.deck .gantt-milestone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--deck-alert);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+body.deck .gantt-milestone::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: var(--deck-alert);
+  display: block;
+  flex: none;
+}
+
+/* ─────────────────────────── Closing ─────────────────────────── */
+
+body.deck .closing-title {
+  font-weight: 700;
+  font-size: 156px;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+body.deck .closing-contacts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  border-top: 3px solid var(--deck-accent);
+  padding-top: 34px;
+  flex: none;
+}
+body.deck .closing-contacts .contact-role {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+body.deck .closing-contacts .contact-name {
+  font-size: var(--deck-card);
+  font-weight: 600;
+  line-height: 1.24;
+}
+body.deck .closing-contacts .contact-reach {
+  font-size: 24px;
+  color: var(--dim);
+  margin-top: 8px;
+}
+
+/* ─────────────────────────── Media ─────────────────────────── */
+
+body.deck .slide-strip {
+  height: 200px;
+  flex: none;
+  overflow: hidden;
+}
+body.deck .slide-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+body.deck .slide-screen {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 72px;
+  padding-top: 8px;
+}
+body.deck .slide-screen.has-text {
+  grid-template-columns: 1.6fr 1fr;
+}
+body.deck .slide-screen.has-text.reverse {
+  grid-template-columns: 1fr 1.6fr;
+}
+body.deck .slide-screen.reverse .screen-frame {
+  order: 2;
+}
+body.deck .screen-frame {
+  margin: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--inset);
+}
+body.deck .screen-bar {
+  flex: none;
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+body.deck .screen-bar span {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+body.deck .screen-frame img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+body.deck .screen-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+body.deck .slide-emblem {
+  height: 140px;
+  width: auto;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+  flex: none;
+}
+
+@media print {
+  body.deck section.slide {
+    break-after: page;
+    page-break-after: always;
+  }
+  body.deck section.slide:last-child {
+    break-after: auto;
+  }
+}

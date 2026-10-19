@@ -1,0 +1,12 @@
+---
+// The cut-out visual set beside a headline, inside a `SlideHead`'s row or on its own.
+import { docImage } from "../../../lib/doc-image";
+
+interface Props {
+  src: string;
+  alt?: string;
+}
+const { src, alt = "" } = Astro.props;
+const rendered = await docImage(src, { width: 600 });
+---
+<img class="slide-emblem" src={rendered} alt={alt} />

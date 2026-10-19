@@ -1,0 +1,20 @@
+---
+// InfoGrid.astro: Grid of cards, InfoItem or any block such as a
+// DemoScreenshot. A lone card on its last row spans the full width rather than
+// leaving a hole, and the grid gap alone spaces the cards.
+interface Props {
+  cols?: 2 | 3;
+}
+const { cols = 3 } = Astro.props;
+---
+
+<div
+  class:list={[
+    "my-6 grid gap-3 [&>*]:my-0",
+    cols === 2
+      ? "grid-cols-2 [&>*:nth-child(2n+1):last-child]:col-span-2"
+      : "grid-cols-3 [&>*:nth-child(3n+1):last-child]:col-span-3",
+  ]}
+>
+  <slot />
+</div>

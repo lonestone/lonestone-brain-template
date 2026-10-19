@@ -1,0 +1,94 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Layout from "~/layouts/Layout.astro";
+import { pageCrumbs } from "~/lib/wiki-fs";
+import DocHeader from "~/components/DocHeader.astro";
+import DocCover from "~/components/DocCover.astro";
+import TableOfContent from "~/components/TableOfContent.astro";
+import { SITE } from "~/lib/site-config";
+import { mdxComponents } from "~/components";
+
+// The printable document template: header banner, cover, contents built from the `##`
+// headings, the MDX body, then a footer with the authors and a disclaimer. Every `kind:
+// document` entry of the `documents` collection is drawn here, whatever its subject.
+interface Props {
+  id: string;
+  entry: CollectionEntry<"documents">;
+}
+const { id, entry } = Astro.props;
+const { title, lead, date, recipient, label, cover, authors, footerNote } = entry.data;
+
+const dateFormatted = date.toLocaleDateString("fr-FR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+const contacts = authors.length ? authors : [{ name: SITE.name, role: undefined, email: SITE.email }];
+const note = footerNote ?? "Document confidentiel, établi à l'attention de son destinataire.";
+
+const { Content, headings } = await render(entry);
+---
+
+<Layout title={`${title} · ${SITE.name}`} breadcrumb={pageCrumbs(id, title)}>
+  <div class="doc-frame">
+    <div class="doc-page doc-page--document">
+      <DocHeader recipient={recipient} kind={label} date={dateFormatted} onCover />
+      <DocCover visual={cover} title={title} lead={lead} />
+
+      <TableOfContent headings={headings} />
+
+      <div class="doc-body">
+        <Content components={mdxComponents} />
+      </div>
+
+      <footer class="doc-footer">
+        <div class="flex flex-wrap gap-x-12 gap-y-4">
+          {contacts.map((person) => (
+            <div class="doc-footer-contact">
+              <div class="doc-footer-name">{person.name}</div>
+              {person.role && <div class="doc-footer-role">{person.role}</div>}
+              <div class="doc-footer-info">
+                {person.email ?? SITE.email}
+                {SITE.website && <><br />{SITE.website}</>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="doc-footer-disclaimer">{note}</div>
+      </footer>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* Prose bullets of a document: a small brand diamond. */
+  .doc-page--document .doc-body > ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--color-brand);
+    transform: rotate(45deg);
+  }
+
+  .doc-body pre.md:not(.mermaid) {
+    background: var(--color-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    font-size: var(--text-small);
+  }
+
+  .doc-body .risk-body ul li {
+    padding-left: 18px !important;
+  }
+
+  @media print {
+    .doc-frame {
+      background: white;
+      min-height: unset;
+    }
+  }
+</style>

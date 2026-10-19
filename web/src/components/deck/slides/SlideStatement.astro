@@ -1,0 +1,22 @@
+---
+// A slide that holds one sentence. The deck's pause: no grid, no block, the
+// statement and at most a line under it.
+import Slide from "../Slide.astro";
+
+interface Props {
+  /** Uppercase line above the statement. */
+  kicker?: string;
+  /** The statement itself. */
+  statement: string;
+  /** One sentence under it. */
+  sub?: string;
+  surface?: "paper" | "ink" | "accent";
+  label?: string;
+}
+const { kicker, statement, sub, surface = "accent", label } = Astro.props;
+---
+<Slide surface={surface} kicker={label} centered>
+  {kicker && <div class="kicker">{kicker}</div>}
+  <p class="statement">{statement}</p>
+  {sub && <p class="statement-sub">{sub}</p>}
+</Slide>

@@ -1,0 +1,16 @@
+---
+// A photographic band closing a slide, cropped to a fixed height so the blocks
+// above keep their room.
+import { docImage } from "../../../lib/doc-image";
+
+interface Props {
+  src: string;
+  alt?: string;
+  position?: string;
+}
+const { src, alt = "", position } = Astro.props;
+const rendered = await docImage(src, { width: 1800 });
+---
+<div class="slide-strip">
+  <img src={rendered} alt={alt} style={position ? `object-position:${position}` : undefined} />
+</div>

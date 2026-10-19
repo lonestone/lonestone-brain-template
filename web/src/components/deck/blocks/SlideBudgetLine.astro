@@ -1,0 +1,20 @@
+---
+// One line of a budget column. Inline by default, which reads as a phase and
+// its amount; `stacked` puts the amount under the label, the form the options
+// take in the narrower column.
+interface Props {
+  label: string;
+  /** Second line, what the amount covers. */
+  detail?: string;
+  amount: string;
+  stacked?: boolean;
+}
+const { label, detail, amount, stacked = false } = Astro.props;
+---
+<div class={stacked ? "budget-option" : "budget-line"}>
+  <div>
+    <div class="budget-label">{label}</div>
+    {detail && <div class="budget-detail">{detail}</div>}
+  </div>
+  <div class="budget-amount">{amount}</div>
+</div>

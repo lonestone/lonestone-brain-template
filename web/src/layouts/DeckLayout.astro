@@ -1,0 +1,58 @@
+---
+// The document stylesheet travels with the deck: a slide may host the same
+// components as a document (Callout, NumberedCards, GanttPlanning...), which
+// are built on the Tailwind tokens declared there. Its rules stay in layers,
+// so the unlayered deck styles below keep the last word.
+import "../styles/global.css";
+// The deck identity.
+import "../styles/deck.css";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="/deck-stage.js" is:inline></script>
+  <script is:inline>
+    // The chrome bar is the same on every slide, so it is filled here rather
+    // than repeated in the content: the deck label on the left, the slide's
+    // own kicker followed by its rank on the right.
+    document.addEventListener('DOMContentLoaded', function() {
+      var stage = document.querySelector('deck-stage[data-label]');
+      if (!stage) return;
+      var label = stage.getAttribute('data-label');
+      stage.querySelectorAll('.chrome .mark').forEach(function(el) {
+        var dot = el.querySelector('.dot');
+        el.textContent = label;
+        if (dot) el.prepend(dot);
+      });
+      var slides = stage.querySelectorAll('section.slide');
+      slides.forEach(function(slide, i) {
+        var tag = slide.querySelector('.chrome .tag');
+        if (!tag) return;
+        var kicker = tag.getAttribute('data-kicker');
+        var rank = String(i + 1).padStart(2, '0');
+        tag.textContent = kicker ? kicker + ' · ' + rank : rank;
+      });
+    });
+  </script>
+</head>
+<body class="deck">
+  <slot />
+  <script>
+    import "../scripts/mermaid.ts";
+  </script>
+</body>
+</html>

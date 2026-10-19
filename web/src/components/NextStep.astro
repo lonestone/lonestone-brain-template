@@ -1,0 +1,21 @@
+---
+// NextStep.astro: Numbered step in the closing "next steps" section. The
+// number stays grey: brand yellow belongs to rules and to the budget block.
+interface Props {
+  num: number | string
+  title: string
+  desc?: string
+}
+const { num, title, desc } = Astro.props
+const label = typeof num === 'number' ? String(num).padStart(2, '0') : num
+---
+
+<div class="doc-step grid break-inside-avoid grid-cols-[34px_1fr] items-start gap-3.5 py-5 [&+&]:border-t [&+&]:border-border sm:grid-cols-[46px_1fr] sm:gap-5">
+  <div class="pt-0.5 text-xl leading-none font-medium tracking-tight text-faint tabular-nums sm:text-[26px]">
+    {label}
+  </div>
+  <div>
+    <div class="mb-1.5 text-[15px] font-medium text-ink">{title}</div>
+    {desc && <div class="text-sm leading-relaxed text-ink-soft">{desc}</div>}
+  </div>
+</div>

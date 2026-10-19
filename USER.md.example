@@ -1,0 +1,23 @@
+# Configuration utilisateur locale
+
+Ce fichier est local et non versionné (`USER.md`). Copier ce fichier en `USER.md` et adapter les chemins à la machine.
+
+## Dossiers
+
+```yaml
+# Documents locaux à analyser (cahiers des charges, contrats, exports)
+documents_folder: /chemin/absolu/vers/documents
+
+# Stockage partagé où vivent les fichiers trop lourds pour le dépôt (PDF illustrés, vidéos)
+shared_storage: /chemin/absolu/vers/stockage-partage
+```
+
+## Projets voisins
+
+Dépôts de code ou de contenu que l'assistant peut lire pour du contexte, en lecture seule sauf demande explicite.
+
+```yaml
+neighbours:
+  - name: site-web
+    path: /chemin/absolu/vers/site-web
+```

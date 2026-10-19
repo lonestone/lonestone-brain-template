@@ -1,0 +1,20 @@
+---
+// A table that fills the height it is given: a header row, the rows themselves
+// spread evenly, and an optional accent total. Columns are declared once as a
+// CSS grid template, so every row aligns without a `<table>`.
+interface Props {
+  /** Column widths, e.g. "1fr 140px 200px". */
+  cols?: string;
+  /** Column headings, left to right. */
+  head: string[];
+}
+const { cols = "1fr 140px 200px", head } = Astro.props;
+const hasTotal = Astro.slots.has("total");
+---
+<div class="dtable" style={`--dtable-cols:${cols}`}>
+  <div class="dtable-head">
+    {head.map((cell, i) => <div style={i > 0 ? "text-align:right" : undefined}>{cell}</div>)}
+  </div>
+  <div class="dtable-rows"><slot /></div>
+  {hasTotal && <div class="dtable-total"><slot name="total" /></div>}
+</div>

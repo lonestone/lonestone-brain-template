@@ -1,0 +1,159 @@
+---
+interface Props {
+  discoveryLabel?: string
+  discoveryTitle: string
+  discoveryItems: string[]
+  deliveryLabel?: string
+  deliveryTitle: string
+  deliveryItems: string[]
+  feedback?: string
+}
+
+const {
+  discoveryLabel, discoveryTitle, discoveryItems,
+  deliveryLabel, deliveryTitle, deliveryItems,
+  feedback,
+} = Astro.props
+---
+
+<div class="iter-wrap">
+  <div class="iter-track">
+
+    <!-- Discovery -->
+    <div class="iter-card iter-discovery">
+      {discoveryLabel && <span class="iter-label">{discoveryLabel}</span>}
+      <strong class="iter-title">{discoveryTitle}</strong>
+      <ul class="iter-list">
+        {discoveryItems.map(item => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <!-- Connector -->
+    <div class="iter-connector">
+      <span class="iter-arrow-fwd">→</span>
+      <span class="iter-arrow-back">↩</span>
+    </div>
+
+    <!-- Delivery -->
+    <div class="iter-card iter-delivery">
+      {deliveryLabel && <span class="iter-label">{deliveryLabel}</span>}
+      <strong class="iter-title">{deliveryTitle}</strong>
+      <ul class="iter-list">
+        {deliveryItems.map(item => <li>{item}</li>)}
+      </ul>
+    </div>
+
+  </div>
+
+  {feedback && <p class="iter-feedback">{feedback}</p>}
+</div>
+
+<style>
+  .iter-wrap { margin: 1.5em 0; }
+
+  .iter-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    font-size: 0.85em;
+  }
+
+  .iter-card {
+    flex: 1;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .iter-discovery {
+    background: var(--color-alt);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    border-left: 3px solid var(--color-brand);
+  }
+
+  .iter-delivery {
+    background: var(--color-ink);
+    border-radius: 0 8px 8px 0;
+    border-left: 3px solid var(--color-brand);
+  }
+
+  .iter-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 6px;
+    background: var(--color-alt);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+    width: 36px;
+  }
+
+  .iter-arrow-fwd {
+    font-size: 1.2em;
+    color: var(--color-ink);
+    line-height: 1;
+  }
+
+  .iter-arrow-back {
+    font-size: 0.95em;
+    color: var(--color-faint);
+    line-height: 1;
+  }
+
+  .iter-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+  .iter-delivery .iter-label { color: var(--color-ink-soft); }
+
+  .iter-title {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1.2;
+  }
+  .iter-delivery .iter-title { color: var(--color-surface); }
+
+  .iter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .iter-list li {
+    position: relative;
+    padding-left: 14px;
+    color: var(--color-ink-soft);
+    line-height: 1.4;
+  }
+  .iter-list li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--color-line);
+  }
+  .iter-delivery .iter-list li { color: var(--color-faint); }
+  .iter-delivery .iter-list li::before { color: var(--color-ink-soft); }
+
+  .iter-feedback {
+    margin-top: 0.6rem;
+    font-size: 0.78em;
+    color: var(--color-muted);
+    font-style: italic;
+    padding: 0.5rem 0.8rem;
+    border-left: 2px dashed var(--color-border);
+  }
+</style>

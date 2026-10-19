@@ -1,0 +1,22 @@
+---
+// StatGrid.astro: Target figures set large, without cards.
+interface Item {
+  value: string
+  label: string
+}
+interface Props {
+  items: Item[]
+}
+const { items } = Astro.props
+---
+
+<div class="mb-8 grid grid-cols-1 gap-x-6 gap-y-7 min-[520px]:grid-cols-2 min-[900px]:grid-cols-4">
+  {items.map((item) => (
+    <div class="doc-stat break-inside-avoid border-t-2 border-brand pt-3.5">
+      <div class="mb-2.5 text-stat leading-none font-medium tracking-[-0.035em] text-ink tabular-nums">
+        {item.value}
+      </div>
+      <div class="text-[13px] leading-normal text-muted">{item.label}</div>
+    </div>
+  ))}
+</div>

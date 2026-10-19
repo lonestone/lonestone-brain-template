@@ -1,0 +1,15 @@
+---
+import { resizeHtmlImages } from "~/lib/doc-image";
+import { MARKDOWN_IMAGE_WIDTH } from "~/lib/image-policy";
+
+interface Props {
+  /** Pre-rendered HTML (marked), with links and image sources already rewritten by wiki-fs. */
+  html: string;
+}
+const html = await resizeHtmlImages(Astro.props.html, { width: MARKDOWN_IMAGE_WIDTH });
+---
+
+<article
+  class="doc-body max-w-none"
+  set:html={html}
+/>

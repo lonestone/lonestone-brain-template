@@ -1,0 +1,83 @@
+---
+// A planning: one lane per chantier, bars placed on a continuous scale so a
+// phase can start mid-period. `from` and `to` are positions on that scale,
+// counted from zero, `months.length - 1` being its end.
+import Slide from "../Slide.astro";
+import SlideHead from "../blocks/SlideHead.astro";
+
+interface GanttItem {
+  from: number;
+  to: number;
+  label: string;
+  /** Who owns the work: `client` draws the dashed bar, `alert` the audits. */
+  tone?: "accent" | "ink" | "soft" | "client" | "alert" | "alert-soft";
+}
+
+interface GanttLane {
+  label: string;
+  items: GanttItem[];
+  /** Bar colour, the name the earlier decks use in place of `tone`. */
+  color?: string;
+}
+
+interface Props {
+  /** Uppercase line above the headline. */
+  eyebrow?: string;
+  headline: string;
+  /** Period headings across the scale. */
+  months: string[];
+  lanes: GanttLane[];
+  /** Closing marker, e.g. "Go Live · Février 2027". */
+  milestone?: string;
+  /** Short uppercase text set right of the headline. */
+  aside?: string;
+  surface?: "paper" | "ink";
+  label?: string;
+}
+
+const {
+  eyebrow,
+  headline,
+  months,
+  lanes,
+  milestone,
+  aside,
+  surface = "paper",
+  label,
+} = Astro.props;
+
+const span = Math.max(months.length - 1, 1);
+const place = (item: GanttItem) => {
+  const left = (item.from / span) * 100;
+  const width = ((item.to - item.from) / span) * 100;
+  return `left:${left}%;width:${width}%`;
+};
+---
+<Slide surface={surface} kicker={label}>
+  <SlideHead kicker={eyebrow} title={headline} aside={aside} />
+  <div class="gantt-chart">
+    <div class="gantt-scale">
+      {months.slice(0, -1).map((month) => <span>{month}</span>)}
+    </div>
+    <div class="gantt-lanes">
+      {lanes.map((lane) => (
+        <div class="gantt-lane">
+          <div class="gantt-name">{lane.label}</div>
+          <div class="gantt-track">
+            {lane.items.map((item) => (
+              <div
+                class:list={["gantt-bar", item.tone && item.tone !== "accent" ? item.tone : undefined]}
+                style={`${place(item)}${!item.tone && lane.color ? `;background:${lane.color}` : ""}`}
+              >
+                {item.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    {milestone && (
+      <div class="gantt-legend"><span class="gantt-milestone">{milestone}</span></div>
+    )}
+  </div>
+</Slide>

@@ -1,0 +1,16 @@
+---
+// Deck variant of the component catalogue: every ```mdx slide fence of `COMPONENTS.md`, in
+// order, as one real deck. The catalogue page embeds each slide from here by its number.
+import DeckLayout from "~/layouts/DeckLayout.astro";
+import DeckShell from "~/components/deck/DeckShell.astro";
+import { catalogSlides } from "~/lib/component-catalog";
+import { SITE } from "~/lib/site-config";
+
+const slides = await catalogSlides();
+---
+
+<DeckLayout title="Composants · slides">
+  <DeckShell label={`${SITE.name} × Destinataire`}>
+    {slides.map((Slide) => <Slide />)}
+  </DeckShell>
+</DeckLayout>

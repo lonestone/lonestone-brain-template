@@ -1,0 +1,40 @@
+.env
+
+# Local user config (paths specific to each machine)
+USER.md
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+.playwright-mcp
+.mcp-web-inspector
+
+# Obsidian workspace (UI state, changes on every click)
+.obsidian/workspace.json
+.obsidian/appearance.json
+.obsidian/themes/
+
+# Claude sessions (ephemeral)
+.claude/sessions/
+.claude/worktrees/
+.claude/settings.local.json
+
+# Python
+__pycache__/
+
+# Web Astro
+.astro
+dist
+node_modules

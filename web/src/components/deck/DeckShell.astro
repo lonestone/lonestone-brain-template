@@ -1,0 +1,12 @@
+---
+// Wrapper of every MDX deck: the 1920 × 1080 stage scaled to the screen, with
+// keyboard navigation and print. `label` is repeated in the chrome bar of each
+// slide, typically "Company × Recipient".
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+<deck-stage width="1920" height="1080" data-label={label}>
+  <slot />
+</deck-stage>

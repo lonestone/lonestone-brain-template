@@ -1,0 +1,67 @@
+---
+// Risk.astro: project risk card with its mitigation
+// title    : intitulé du risque
+// severity : "low" | "medium" | "high" (optionnel, défaut "medium")
+// Slot: description of the risk and of its mitigation
+interface Props {
+  title: string
+  severity?: "low" | "medium" | "high"
+}
+const { title, severity = "medium" } = Astro.props
+---
+
+<div class={`doc-risk risk-sev-${severity}`}>
+  <div class="risk-head">
+    <span class="risk-title">{title}</span>
+  </div>
+  <div class="risk-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .doc-risk {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-border);
+    border-radius: 2px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+  }
+  .doc-risk.risk-sev-high {
+    border-left-color: var(--color-alert);
+  }
+  .doc-risk.risk-sev-medium {
+    border-left-color: var(--color-brand-ink);
+  }
+  .doc-risk.risk-sev-low {
+    border-left-color: var(--color-ok);
+  }
+
+  .risk-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .risk-title {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink);
+    line-height: 1.4;
+  }
+
+  .risk-body {
+    font-size: 14px;
+    color: var(--color-ink-soft);
+    line-height: 1.65;
+  }
+  .risk-body :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .risk-body :global(p) { margin: 0; }
+  .risk-body :global(p + p) { margin-top: 0.6em; }
+</style>

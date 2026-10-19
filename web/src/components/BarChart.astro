@@ -1,0 +1,20 @@
+---
+// BarChart.astro: Horizontal bar chart for a single series of magnitudes, one <Bar> per row.
+// Every bar is scaled against `max`, passed down to the rows as a CSS variable.
+interface Props {
+  title?: string
+  /** Value of a full-width bar, usually the largest row. */
+  max: number
+  /** Source or reading note, under the chart. */
+  caption?: string
+}
+const { title, max, caption } = Astro.props
+---
+
+<figure class="my-6 break-inside-avoid" style={`--bar-max: ${max}`}>
+  {title && <figcaption class="mb-3 text-small font-semibold text-ink">{title}</figcaption>}
+  <div class="flex flex-col gap-1.5">
+    <slot />
+  </div>
+  {caption && <div class="mt-3 text-micro text-muted">{caption}</div>}
+</figure>

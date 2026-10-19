@@ -1,0 +1,17 @@
+---
+// An image for a slide's `media` or `aside` slot: a photograph bleeding to the
+// right edge, or the cut-out visual that marks a part divider.
+import { docImage } from "../../../lib/doc-image";
+
+interface Props {
+  src: string;
+  alt?: string;
+  /** Vertical framing of a bleeding photograph. */
+  position?: string;
+  /** Requested width, twice the displayed width. */
+  width?: number;
+}
+const { src, alt = "", position, width = 1600 } = Astro.props;
+const rendered = await docImage(src, { width });
+---
+<img src={rendered} alt={alt} style={position ? `object-position:${position}` : undefined} />

@@ -1,0 +1,75 @@
+---
+import { docImage } from '~/lib/doc-image'
+// InfoItem.astro: info card of an InfoGrid
+// icon  : emoji (e.g. "📅"), exclusive with img
+// img   : path to a cut-out visual (e.g. "/assets/visuels/cube.png")
+// title : card label
+interface Props {
+  icon?: string
+  img?: string
+  title: string
+}
+const { icon, img, title } = Astro.props
+const renderedImg = await docImage(img, { width: 240 })
+---
+
+<div class="info-item">
+  <div class="info-visual">
+    {img
+      ? <img src={renderedImg} alt="" class="info-3d" />
+      : <span class="info-icon">{icon}</span>
+    }
+  </div>
+  <div class="info-title">{title}</div>
+  <div class="info-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .info-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    padding: 18px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-visual {
+    min-height: 28px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  .info-3d {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+  }
+
+  .info-title {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.01em;
+  }
+
+  .info-body {
+    font-size: 1em;
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+
+  .info-body :global(p) {
+    margin: 0;
+  }
+</style>

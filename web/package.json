@@ -1,0 +1,39 @@
+{
+  "name": "wiki-web",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/check-assets.mjs && node scripts/check-routes.mjs && node scripts/check-components.mjs",
+    "build": "astro build",
+    "assets:check": "node scripts/check-assets.mjs",
+    "assets:fix": "node scripts/check-assets.mjs --fix",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "routes:check": "node scripts/check-routes.mjs",
+    "components:check": "node scripts/check-components.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/markdown-remark": "^7.3.3",
+    "@astrojs/mdx": "^8.1.0",
+    "@astrojs/react": "^7.1.0",
+    "@iconify-json/lucide": "^1.2.144",
+    "@iconify-json/simple-icons": "^1.2.100",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.4.0",
+    "astro-icon": "^1.2.0",
+    "marked": "^18.1.1",
+    "mermaid": "^12.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,22 @@
+---
+// One tile. Give it `value` for a stack entry, `figure` for a volume; the slot
+// holds a sentence when the tile needs one.
+interface Props {
+  label?: string;
+  value?: string;
+  /** Value set at figure scale, for a count or an amount. */
+  figure?: string;
+  tone?: "surface" | "ink" | "accent";
+  /** Show the accent tick above the label. */
+  tick?: boolean;
+}
+const { label, value, figure, tone = "surface", tick = false } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class:list={["tile", { "tone-ink": tone === "ink", "tone-accent": tone === "accent" }]}>
+  {tick && <div class="tick"></div>}
+  {label && <div class="tile-label">{label}</div>}
+  {figure && <div class="tile-value big">{figure}</div>}
+  {value && <div class="tile-value">{value}</div>}
+  {hasBody && <div class="prose"><slot /></div>}
+</div>

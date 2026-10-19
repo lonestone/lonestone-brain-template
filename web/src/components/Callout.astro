@@ -1,0 +1,65 @@
+---
+// Callout.astro: Grey panel with a brand rule, wrapping a markdown list.
+---
+
+<div class="callout-block">
+  <slot />
+</div>
+
+<style>
+  /* ── Base (requirements / détail) ── */
+  .callout-block {
+    margin: 0.6em 0 1.2em;
+    padding: 0.6rem 1.1rem 0.6rem 1.3rem;
+    background: var(--color-alt);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-brand);
+    border-radius: 0 6px 6px 0;
+  }
+
+
+  /* Lists */
+  .callout-block :global(ul) {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .callout-block :global(li) {
+    position: relative;
+    padding: 0.42rem 0 0.42rem 1.5rem !important;
+    margin: 0 !important;
+    color: var(--color-ink);
+    line-height: 1.45;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .callout-block :global(li:last-child) {
+    border-bottom: none;
+    padding-bottom: 0.2rem !important;
+  }
+  .callout-block :global(li:first-child) {
+    padding-top: 0.2rem !important;
+  }
+
+  /* Bullets */
+  .callout-block :global(li::before) {
+    content: '→' !important;
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    font-weight: 700;
+    font-size: 0.82em;
+    color: var(--color-faint) !important;  /* neutral grey for detail rows */
+  }
+
+  /* Inline code */
+  .callout-block :global(code) {
+    font-size: 0.82em;
+    background: var(--color-alt);
+    color: var(--color-code);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    border: 1px solid var(--color-border);
+  }
+</style>

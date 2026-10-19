@@ -1,0 +1,495 @@
+/* Layer order, declared ahead of everything else so that a class set on a
+   component always has the last word over the markdown rules below. Without
+   this line the order of the imports would decide for us. */
+@layer theme, base, components, document, utilities;
+
+@import "tailwindcss";
+
+
+@theme {
+  /* ── Palette ─────────────────────────────────────────────────────────────
+     One source for the app and for the documents. Replace the brand colours
+     with your own: `brand` is the light accent that grounds panels and slides
+     (dark text must read on it), `accent` is the darker one that holds on the
+     light sidebar. The greys run from densest to lightest. */
+  --color-brand: #fff056;
+  --color-accent: #f5c700;
+  --color-accent-ink: #8a6a00;
+  --color-primary: #28282b;
+  /* Page ground, identical on screen and in print. */
+  --color-page: #fff;
+  /* Sidebar and topnav, hidden in print, hence the off-white. */
+  --color-chrome: #fffefb;
+
+  /* Encres et surfaces des documents. */
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #4f4f4f;
+  --color-muted: #6d6d6d;
+  --color-faint: #b0b0b0;
+  --color-line: #d1d1d1;
+  --color-border: #e7e7e7;
+  --color-alt: #f6f6f6;
+  /* Alternate row of a table, lighter than the alt ground of its header. */
+  --color-stripe: #fbfbfb;
+  --color-surface: #fff;
+
+  /* Brand washes, lightest to densest, plus the ink that reads on top of
+     them. They dress the panels that carry a figure. */
+  --color-brand-wash: #fffbeb;
+  --color-brand-soft: #fef3c7;
+  --color-brand-line: #fde68a;
+  --color-brand-ink: #92400e;
+
+  /* Signal colours: a risk, a success, a constraint. They do not decorate,
+     they state a status. */
+  --color-alert: #dc2626;
+  --color-alert-line: #fca5a5;
+  --color-alert-wash: #fef2f2;
+  --color-ok: #16a34a;
+  --color-ok-ink: #166534;
+  --color-ok-wash: #f0fdf4;
+  --color-warn: #f59e0b;
+  --color-warn-line: #fbbf24;
+  --color-warn-ink: #ca8a04;
+  --color-info: #93c5fd;
+  --color-info-ink: #475569;
+  --color-info-wash: #f1f5f9;
+  --color-code: #c7253e;
+  /* Section heading: the ink blue of commercial documents. */
+  --color-heading: #1c2b4a;
+
+  /* ── Type scale ──────────────────────────────────────────────────────────
+     One scale for every document, on screen as in PDF. A level 4 heading weighs the same as body text; weight
+     and case are what set it apart. The print variant further down this file
+     redefines these same variables one notch lower. */
+  --text-micro: 12px;
+  --text-small: 14px;
+  --text-body: 16px;
+  --text-lead: 18px;
+  --text-h4: 16px;
+  --text-h3: 23px;
+  --text-h2: 28px;
+  --text-h1: 40px;
+  /* Key figure of a StatGrid, larger than any heading. */
+  --text-stat: 42px;
+
+  --leading-doc: 1.7;
+  --leading-doc-tight: 1.35;
+
+  /* Printed page margin. The value is repeated literally in the `@page` rule
+     below, since Chromium does not resolve variables there. It lives here so
+     that a document computing its own height knows what is left to it. */
+  --page-margin: 1.4cm;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+}
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ── Markdown ─────────────────────────────────────────────────────────────
+   `lib/md-class.ts` sets the `md` class on every element that comes from
+   markdown. The rules below target it alone: a component never receives it, so
+   its layout belongs to it entirely.
+
+   The scale comes from the `--text-*` tokens declared above. A view that
+   diverges, such as print, redefines those tokens rather than these rules. */
+
+h1.md {
+  font-size: var(--text-h1);
+  @apply mb-5 leading-[1.1] font-semibold tracking-tight text-balance text-ink;
+}
+
+/* Section heading. A document is scanned by its numbering, so the number sits
+   above the title and the rule closes the block underneath. The counter is
+   reset by the document body, further down. */
+h2.md {
+  counter-increment: doc-section;
+  font-size: var(--text-h2);
+  @apply mt-16 mb-6 scroll-mt-18 border-b border-border pb-3 leading-tight font-normal text-ink;
+}
+
+h2.md:first-of-type {
+  @apply mt-6;
+}
+
+h2.md::before {
+  content: counter(doc-section, decimal-leading-zero);
+  font-size: var(--text-micro);
+  @apply mb-2.5 block leading-none font-medium tracking-[0.04em] text-faint tabular-nums;
+}
+
+h3.md {
+  font-size: var(--text-h3);
+  @apply mt-8 mb-3 scroll-mt-18 leading-snug font-medium text-ink;
+}
+
+/* Same size as body text: weight and case are enough to place it. */
+h4.md {
+  font-size: var(--text-h4);
+  @apply mt-8 mb-2 scroll-mt-18 font-semibold tracking-wider text-ink-soft uppercase;
+}
+
+p.md {
+  @apply mb-3.5 text-ink;
+}
+
+/* A fully bold paragraph reads as a minor subheading. */
+p.md.label-only {
+  font-size: var(--text-small);
+  @apply mt-7 mb-1.5 border-l-2 border-brand pl-2.5 font-semibold text-ink;
+}
+
+strong.md {
+  @apply font-medium text-ink;
+}
+
+em.md {
+  @apply text-muted italic;
+}
+
+a.md {
+  @apply text-ink underline decoration-brand decoration-2 underline-offset-2;
+}
+
+hr.md {
+  @apply my-10 border-t border-border;
+}
+
+ul.md,
+ol.md {
+  @apply mb-4 list-none pl-0;
+}
+
+li.md {
+  @apply relative mb-1.5 pl-[18px] text-ink;
+}
+
+li.md::before {
+  content: '–';
+  @apply absolute left-0 font-light text-faint;
+}
+
+ol.md {
+  counter-reset: list;
+}
+
+ol.md > li.md {
+  counter-increment: list;
+}
+
+ol.md > li.md::before {
+  content: counter(list) '.';
+  font-size: var(--text-small);
+  @apply font-semibold;
+}
+
+code.md {
+  font-size: var(--text-small);
+  @apply rounded border border-border bg-alt px-1.5 py-0.5 font-mono text-code;
+}
+
+td.md code.md {
+  font-size: var(--text-micro);
+  @apply inline-block border-0 bg-ink px-2 py-0.5 whitespace-nowrap text-[#e8e8e8];
+}
+
+blockquote.md {
+  @apply my-5 rounded-r-md border-l-[3px] border-border bg-alt px-4.5 py-3.5;
+}
+
+blockquote.md p.md {
+  font-size: var(--text-small);
+  @apply mb-2 text-muted italic;
+}
+
+blockquote.md p.md:last-child {
+  @apply mb-0;
+}
+
+/* A single-paragraph quote is a budget note, on a brand wash. */
+blockquote.md:not(:has(p + p)) {
+  @apply border-brand bg-brand-wash;
+}
+
+blockquote.md:not(:has(p + p)) p.md {
+  font-size: var(--text-body);
+  @apply font-medium text-ink not-italic;
+}
+
+/* Rules rather than a frame, and no striping: a table is read line by line,
+   the filets are enough to follow one. */
+table.md,
+.table-wrap {
+  font-size: var(--text-small);
+  @apply my-6;
+}
+
+.table-wrap {
+  @apply overflow-x-auto;
+}
+
+table.md {
+  @apply w-full border-collapse;
+}
+
+th.md {
+  font-size: var(--text-micro);
+  @apply border-b-2 border-border bg-alt px-3 py-2 text-left font-medium tracking-[0.06em] text-ink uppercase;
+}
+
+td.md {
+  @apply border-b border-border px-3 py-2 align-top leading-normal text-ink-soft;
+}
+
+tr.md:last-child td.md {
+  @apply border-b-0;
+}
+
+/* Total row: the only one weight is allowed to bring forward. */
+tr.md:has(td > strong):not(.epic-row) td.md,
+tr.is-total td.md {
+  @apply font-medium text-ink;
+}
+
+/* Budget tables, grouped by epic. */
+.budget-table td.md,
+.budget-table th.md {
+  @apply px-3 py-1.5;
+}
+
+tr.epic-row td.md {
+  font-size: var(--text-micro);
+  @apply border-t-2 border-b-0 border-brand bg-[#404040] py-2.5 font-bold tracking-wider text-white uppercase;
+}
+
+tr.epic-row:first-child td.md {
+  @apply border-t-0;
+}
+
+tr.feat-row td.md {
+  @apply border-b border-alt text-ink-soft;
+}
+
+/* Mermaid diagrams: both markdown pipelines emit `<pre class="mermaid">`,
+   rendered by scripts/mermaid.ts with the brand theme. */
+pre.mermaid {
+  @apply my-6 flex justify-center overflow-auto rounded-lg border border-border bg-alt px-4 py-6 font-sans text-ink print:break-inside-avoid;
+}
+
+pre.mermaid svg {
+  @apply h-auto max-w-full;
+}
+
+/* ── Document frame ───────────────────────────────────────────────────────
+   Page width, standfirst, prose lists and footer, shared by every document:
+   the document template, the default wiki view and print. */
+
+.doc-frame {
+  /* Header banner height, mirrored as a gap under the cover when printing. */
+  --doc-header-height: 48px;
+  font-family: var(--font-sans);
+  @apply min-h-screen bg-page font-light text-ink print:min-h-0 print:bg-white;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.doc-page {
+  /* In print the gutter is the page's own: two stacked margins would narrow
+     the text for no reason. */
+  @apply mx-auto box-border max-w-[940px] px-5 pt-7 pb-16 sm:px-8 sm:pt-12 sm:pb-22 print:max-w-none print:p-0;
+}
+
+/* The document body owns the section counter its headings increment. */
+.doc-body {
+  counter-reset: doc-section;
+  @apply max-w-none font-light;
+}
+
+/* Standfirst: the paragraph that follows the document title. */
+.doc-body h1.md + p.md {
+  font-size: var(--text-lead);
+  @apply mb-14 leading-relaxed text-ink-soft;
+}
+
+/* Top-level markdown lists breathe more inside a document; components keep
+   their own markers. */
+.doc-body > ul.md > li.md {
+  @apply mb-2.5 pl-5.5 leading-relaxed text-ink-soft;
+}
+
+.doc-body a.md:hover {
+  @apply decoration-4 print:decoration-2;
+}
+
+/* ── Document footer ── */
+
+.doc-footer {
+  @apply mt-18 flex flex-col flex-wrap gap-4 border-t border-border pt-6 sm:flex-row sm:items-end sm:justify-between;
+}
+
+.doc-footer-name {
+  font-size: var(--text-small);
+  @apply font-semibold text-ink;
+}
+
+.doc-footer-role {
+  font-size: var(--text-micro);
+  @apply mt-0.5 text-muted;
+}
+
+.doc-footer-info {
+  font-size: var(--text-micro);
+  @apply mt-2 leading-relaxed text-muted;
+}
+
+.doc-footer-disclaimer {
+  font-size: var(--text-micro);
+  @apply max-w-none text-left leading-normal text-faint sm:max-w-80 sm:text-right;
+}
+
+/* ── Dense variant ───────────────────────────────────────────────────────
+   Backlogs, scopes and project sheets: the same vocabulary, one notch tighter
+   because these pages are read as tables more than as prose. It redefines the
+   scale, never the rules. */
+
+.doc-compact {
+  --text-body: 14px;
+  --text-small: 12px;
+  --text-micro: 11px;
+  --text-h4: 12px;
+  --text-h3: 15px;
+  --text-h2: 12px;
+  --text-h1: 20px;
+  --text-stat: 26px;
+  font-size: var(--text-body);
+  @apply leading-normal text-ink-soft;
+}
+
+/* Level 2 acts as a cross-heading in a dense page: small grey caps rather
+   than a serif title that would eat the page. */
+.doc-compact h2.md {
+  @apply mt-8 mb-3 border-b-0 pb-0 font-semibold tracking-wider text-faint uppercase;
+  font-family: var(--font-sans);
+}
+
+/* A working page is not a document handed to a client: no section numbers. */
+.doc-compact h2.md::before {
+  content: none;
+}
+
+.doc-compact h3.md {
+  @apply mt-5 mb-2 border-l-0 pl-0;
+}
+
+.doc-compact th.md,
+.doc-compact td.md {
+  @apply px-2 py-1.5;
+}
+
+/* ── Slide variant ────────────────────────────────────────────────────────
+   A deck slide is a 1920 x 1080 stage, where document components written for a
+   940px page come out too small to read from the back of a room. `zoom` lifts
+   the whole block, rem lengths included, which a token override cannot reach:
+   several components size their own rail and nodes in rem. The container
+   shrinks to its natural document width in CSS pixels, so the components keep
+   the proportions they were drawn with.
+
+   `doc-on-slide-lg` is for a slide carrying a single block, `doc-on-slide-sm`
+   for one carrying a dense table or a planning. */
+
+.doc-on-slide {
+  zoom: 1.5;
+}
+
+.doc-on-slide-lg {
+  zoom: 1.75;
+}
+
+.doc-on-slide-sm {
+  zoom: 1.25;
+}
+
+/* On a slide the block stands alone: the vertical margins components carry for
+   a flowing document only push it off centre. */
+.doc-on-slide > :first-child,
+.doc-on-slide-lg > :first-child,
+.doc-on-slide-sm > :first-child {
+  margin-top: 0;
+}
+
+.doc-on-slide > :last-child,
+.doc-on-slide-lg > :last-child,
+.doc-on-slide-sm > :last-child {
+  margin-bottom: 0;
+}
+
+/* ── Print ────────────────────────────────────────────────────────────────
+   `@page` cannot be scoped: a rule written inside a renderer applies to every
+   document of the site, since the single route gathers them all into one
+   bundle. Page geometry is therefore decided here, once, and nowhere else. A
+   document that needs more room adds padding to its container, which repeats
+   properly from page to page.
+
+   Named pages are safe: they only apply to elements that ask for them through
+   `page: <name>`. That is how covers and separators print full bleed. */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 1.4cm;
+  }
+  /* Full bleed, reserved for elements carrying `page: cover`. */
+  @page cover {
+    size: A4;
+    margin: 0;
+  }
+  @page separator {
+    size: A4;
+    margin: 0;
+  }
+
+  /* Backgrounds and washes must print as they show on screen: without this
+     rule Chromium whitens anything that carries a colour. */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
+    orphans: 4;
+    widows: 4;
+  }
+  /* A section number sits on its own line above the title, so the heading box
+     has to stay whole: without this, the number prints alone at the foot of a
+     page and its title opens the next one. */
+  h2,
+  h3,
+  h4 {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Prevent the first entry from being separated from its section heading. */
+  h2 + article,
+  h2 + section,
+  h2 + div,
+  h2 + * {
+    break-before: avoid !important;
+    page-break-before: avoid !important;
+  }
+}

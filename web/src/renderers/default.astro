@@ -1,0 +1,80 @@
+---
+// Plain markdown view, used by every page with no renderer of its own: a rendered file, or a
+// listing of a folder's children (headed by its README when it has one). An `.mdx` file that
+// calls components is compiled as MDX, so its components render.
+//
+// A file of the `documents` collection (an `.mdx` filed in a `documents/` folder) is drawn by
+// the printable document template, or by the slide layout when its frontmatter says
+// `kind: deck`. The collection can live anywhere in the tree, which is why it is resolved
+// here rather than by a renderer's position.
+import { getCollection, render } from "astro:content";
+import Layout from "~/layouts/Layout.astro";
+import DeckLayout from "~/layouts/DeckLayout.astro";
+import WikiContent from "~/components/WikiContent.astro";
+import DocumentPage from "~/components/pages/DocumentPage.astro";
+import { mdxComponents } from "~/components";
+import { entryForPage } from "~/lib/content-lookup";
+import { renderWikiPage, getFolderListing, pageCrumbs } from "~/lib/wiki-fs";
+import { compileDocument } from "~/lib/mdx-snippet";
+
+interface Props {
+  id: string;
+  isFolder: boolean;
+}
+const { id, isFolder } = Astro.props;
+
+const entry = isFolder ? undefined : entryForPage(await getCollection("documents"), id);
+const Deck = entry?.data.kind === "deck" ? (await render(entry)).Content : null;
+
+const page = isFolder || entry ? null : renderWikiPage(id);
+const folder = isFolder ? getFolderListing(id) : null;
+const title = page?.title ?? folder?.title ?? id;
+// An MDX document that calls components renders through MDX, the rest through `marked`.
+const Document = page?.mdx ? await compileDocument(page.mdx.source, page.mdx.path) : null;
+---
+
+{entry && Deck && (
+  <DeckLayout title={entry.data.title}>
+    <Deck components={mdxComponents} />
+  </DeckLayout>
+)}
+
+{entry && !Deck && <DocumentPage id={id} entry={entry} />}
+
+{!entry && (
+  <Layout title={title} breadcrumb={pageCrumbs(id, title)}>
+    <main class="doc-page">
+      {page && Document && (
+        <article class="doc-body max-w-none">
+          <Document />
+        </article>
+      )}
+      {page && !Document && <WikiContent html={page.html} />}
+
+      {folder && folder.readmeHtml && <WikiContent html={folder.readmeHtml} />}
+
+      {folder && !folder.readmeHtml && (
+        <div>
+          <h1 class="text-2xl font-semibold text-zinc-900 mb-6">{folder.title}</h1>
+          {folder.items.length > 0 ? (
+            <ul class="list-none p-0 divide-y divide-zinc-100 border-y border-zinc-100">
+              {folder.items.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="flex items-center gap-2 py-2.5 px-1 text-sm text-zinc-700 no-underline hover:bg-zinc-50 hover:no-underline"
+                  >
+                    <span class="text-zinc-400">{item.type === "folder" ? "📁" : "📄"}</span>
+                    <span class="truncate">{item.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-sm text-zinc-400">Dossier vide.</p>
+          )}
+        </div>
+      )}
+    </main>
+  </Layout>
+)}

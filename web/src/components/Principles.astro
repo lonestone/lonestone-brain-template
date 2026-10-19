@@ -1,0 +1,28 @@
+---
+// Principles.astro: Design decisions in two columns, term on the left and
+// explanation on the right, separated by rules rather than boxed in cards.
+interface Item {
+  title: string
+  body: string
+}
+interface Props {
+  items: Item[]
+}
+const { items } = Astro.props
+---
+
+<div class="flex flex-col">
+  {items.map((item, i) => (
+    <div
+      class:list={[
+        "doc-principle grid break-inside-avoid grid-cols-1 gap-2 border-t border-border py-5 md:grid-cols-[2fr_3fr] md:gap-8",
+        i === 0 && "border-t-0 pt-1",
+      ]}
+    >
+      <div class="text-[17px] leading-snug font-medium tracking-[-0.005em] text-balance text-ink">
+        {item.title}
+      </div>
+      <div class="text-[14.5px] leading-[1.7] text-ink-soft">{item.body}</div>
+    </div>
+  ))}
+</div>

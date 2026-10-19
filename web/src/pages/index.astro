@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import WikiContent from "../components/WikiContent.astro";
+import { renderWikiPage } from "../lib/wiki-fs";
+import { SITE } from "../lib/site-config";
+
+// Homepage: the repo README, rendered at the root.
+const readme = renderWikiPage("README");
+---
+
+<Layout title={SITE.wikiTitle}>
+  <main class="doc-page">
+    {readme ? <WikiContent html={readme.html} /> : <p>README introuvable.</p>}
+  </main>
+</Layout>

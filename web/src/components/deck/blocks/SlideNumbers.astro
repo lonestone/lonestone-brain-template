@@ -1,0 +1,10 @@
+---
+// A numbered grid, the workhorse of the deck: engagements, arguments, verrous,
+// deliverables. Two columns read as a 2×2 block, three or four stack their
+// number above the text.
+interface Props {
+  cols?: 2 | 3 | 4;
+}
+const { cols = 2 } = Astro.props;
+---
+<div class:list={["numbers", `cols-${cols}`]}><slot /></div>

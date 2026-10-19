@@ -1,0 +1,11 @@
+---
+// The line of short uppercase terms that closes a slide, above its bottom
+// margin. For the few words that situate the studio or the offer.
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+<div class="slide-foot">
+  {items.map((item) => <span>{item}</span>)}
+</div>

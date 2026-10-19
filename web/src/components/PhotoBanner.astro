@@ -1,0 +1,26 @@
+---
+import { docImage } from '~/lib/doc-image'
+// PhotoBanner.astro: Full-bleed photo banner, spilling past the document
+// margins. How far it spills follows the container padding, which is wider in
+// print.
+interface Props {
+  src: string
+  alt?: string
+  height?: number
+  objectPosition?: string
+}
+const { src, alt = '', height = 240, objectPosition = 'center 30%' } = Astro.props
+const renderedSrc = await docImage(src, { width: 1800 })
+---
+
+<div
+  class="photo-banner -mx-8 block overflow-hidden print:-mx-10"
+  style={`height:${height}px`}
+>
+  <img
+    src={renderedSrc}
+    alt={alt}
+    class="block size-full object-cover"
+    style={`object-position:${objectPosition}`}
+  />
+</div>

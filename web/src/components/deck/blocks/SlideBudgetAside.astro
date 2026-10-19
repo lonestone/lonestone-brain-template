@@ -1,0 +1,15 @@
+---
+// The inverted box that closes a budget column, for a recurring cost set apart
+// from the forfait.
+interface Props {
+  label: string;
+  amount: string;
+}
+const { label, amount } = Astro.props;
+const hasBody = Astro.slots.has("default");
+---
+<div class="budget-aside tone-ink">
+  <div class="tile-label">{label}</div>
+  <div class="budget-aside-value">{amount}</div>
+  {hasBody && <div class="prose"><slot /></div>}
+</div>

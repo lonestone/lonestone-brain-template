@@ -1,0 +1,88 @@
+---
+/**
+ * RACIMatrix: inverted responsibility table.
+ * Rows are activities, columns are roles, cells are R/A/C/I badges.
+ *
+ * roles: array of { label, sub?, group? }
+ * rows:  array of { activity, values: string[] }, where values lines up with
+ *        roles by index and each entry is 'R' | 'A' | 'C' | 'I' | ''
+ */
+
+interface Role {
+  label: string
+  sub?: string
+  /** `external` marks the roles held outside the company, set apart by a rule. */
+  group?: 'internal' | 'external'
+}
+
+interface RACIRow {
+  activity: string
+  values: string[]
+}
+
+interface Props {
+  roles: Role[]
+  rows: RACIRow[]
+}
+
+const { roles, rows } = Astro.props
+
+const badge = "inline-flex items-center justify-center rounded text-[0.65rem] font-semibold tracking-[0.03em]"
+const badgeSize = "size-[22px]"
+const legendSize = "size-[18px] text-[0.6rem]"
+const badgeTone: Record<string, string> = {
+  R: "bg-brand text-ink",
+  A: "bg-ink text-brand",
+  C: "bg-border text-ink-soft",
+  I: "border border-border bg-surface text-faint",
+}
+
+const cell = "border-r border-b border-border last:border-r-0"
+---
+
+<div class="raci my-6 overflow-hidden rounded-lg border border-border text-[0.78rem]">
+  <div class="flex items-center gap-1 border-b border-border bg-alt px-4 py-2 text-[0.7rem] text-ink-soft">
+    <span class:list={[badge, legendSize, badgeTone.R]}>R</span> Réalise &ensp;
+    <span class:list={[badge, legendSize, badgeTone.A]}>A</span> Accountable &ensp;
+    <span class:list={[badge, legendSize, badgeTone.C]}>C</span> Consulté &ensp;
+    <span class:list={[badge, legendSize, badgeTone.I]}>I</span> Informé
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[520px] border-collapse">
+      <thead class="bg-ink">
+        <tr>
+          <th class="w-[200px] min-w-[160px] border-r border-ink bg-ink px-3 py-2 text-left text-[0.62rem] font-medium tracking-[0.06em] text-muted uppercase"></th>
+          {roles.map((r) => (
+            <th
+              class:list={[
+                "min-w-[72px] border-r border-ink bg-ink px-2.5 py-2 text-center last:border-r-0",
+                r.group === 'external' && "border-l-2 border-l-ink-soft",
+              ]}
+            >
+              <span class="block text-[0.7rem] leading-snug font-medium text-surface">{r.label}</span>
+              {r.sub && <span class="mt-px block text-[0.6rem] leading-tight font-medium text-faint">{r.sub}</span>}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, ri) => (
+          <tr class:list={[ri % 2 === 0 && "bg-alt", "last:[&_td]:border-b-0"]}>
+            <td class:list={[cell, "px-3 py-2 text-[0.72rem] leading-snug font-semibold text-ink-soft"]}>
+              {row.activity}
+            </td>
+            {roles.map((_, ci) => {
+              const v = (row.values[ci] ?? '').toUpperCase()
+              return (
+                <td class:list={[cell, "px-2 py-1.5 text-center align-middle"]}>
+                  {v ? <span class:list={[badge, badgeSize, badgeTone[v]]}>{v}</span> : null}
+                </td>
+              )
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
