@@ -91,7 +91,7 @@ const A4 = { width: 794, height: 1123 }; // 96 dpi
 
 const chromium = await loadChromium();
 const { url, stop } = await server();
-const browser = await chromium.launch();
+const browser = await chromium.launch({ chromiumSandbox: process.platform !== 'linux' });
 
 try {
   const page = await browser.newPage();
