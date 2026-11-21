@@ -30,7 +30,10 @@ Ce schema co-évolue entre toi et l'équipe. Quand l'organisation du wiki change
 
 Ne jamais coller dans la conversation un texte déjà sauvegardé dans un fichier (brouillon, page wiki, email). Pointer le fichier suffit. Le chat sert aux décisions, aux questions et aux résumés courts.
 
-Poser les questions et proposer des choix avec l'outil `AskUserQuestion`, pas en texte. Écrire d'abord dans la réponse l'analyse ou les constats dont dépend la question : l'utilisateur ne voit pas ton raisonnement.
+Poser les questions et proposer des choix avec l'outil `AskUserQuestion`, pas en texte.
+Tout le contexte nécessaire pour répondre (analyse, constats, commande ou lien à utiliser) va dans le texte de la question elle-même, en markdown si besoin (titres, tableaux, listes, code) : le texte écrit avant la question peut ne pas s'afficher, et l'utilisateur ne voit pas ton raisonnement.
+La question proprement dite reste courte, en dernière ligne de ce texte.
+Le champ `preview` d'une option s'affiche brut : jamais de markdown dedans.
 
 ## Architecture : PARA + LLM Wiki
 
