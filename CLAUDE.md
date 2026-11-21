@@ -10,6 +10,7 @@ Ce schema co-évolue entre toi et l'équipe. Quand l'organisation du wiki change
 - Ne jamais committer ni pousser sans accord explicite, même pour une petite correction. Un accord couvre un commit, pas toute la session.
 - Committer sur la branche courante. Sur `main`, sans demande de branche, committer directement sur `main`.
 - Ne jamais utiliser la mémoire utilisateur ou projet de Claude. Quand on te demande de retenir quelque chose, ajouter une instruction minimale ici, dans `CLAUDE.md`, ou dans la skill concernée sous `.claude/skills/`.
+- Une règle s'écrit une phrase par ligne, pour qu'un changement ne réécrive qu'une ligne du diff et pas tout le paragraphe.
 - `SKILLS.md`, à la racine, catalogue toutes les skills de `.claude/skills/` (rôle, étapes, skills utilisées, sortie), dans l'esprit de `COMPONENTS.md`. Créer, renommer ou supprimer une skill met à jour sa fiche dans le même changement.
 - Quand une action est bloquée par une permission, résumer l'action précise (outil, cible, contenu) et demander l'autorisation, puis continuer le reste du travail en attendant.
 
