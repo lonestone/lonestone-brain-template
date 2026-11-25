@@ -17,8 +17,8 @@ Signer cinq diagnostics au deuxième trimestre 2026, dont deux convertis en miss
 
 ## Documents
 
-- [Note de cadrage](documents/2026-01-20-note-de-cadrage.mdx) : périmètre, déroulé, prix et risques de l'offre, document imprimable
-- [Deck de lancement](documents/2026-02-03-deck-lancement.mdx) : présentation de l'offre à l'équipe commerciale
+- [Note de cadrage](documents/note-de-cadrage.mdx) : périmètre, déroulé, prix et risques de l'offre, document imprimable
+- [Deck de lancement](documents/deck-lancement.mdx) : présentation de l'offre à l'équipe commerciale
 - [Atelier de cadrage du 14 janvier](2026-01-14-atelier-de-cadrage.md) : compte rendu, décisions et actions
 
 ## Questions ouvertes
