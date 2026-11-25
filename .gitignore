@@ -16,6 +16,7 @@ USER.md
 *~
 
 # Temporary files
+*.pdf
 *.tmp
 *.temp
 .playwright-mcp
