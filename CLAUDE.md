@@ -109,6 +109,7 @@ Pages markdown par défaut, tableaux comparatifs, diagrammes Mermaid, documents 
 
 - kebab-case : `process-recrutement.md`
 - Tout fichier daté commence par la date au format `YYYY-MM-DD-` : `2026-03-12-comite-de-direction.md`.
+- Un document ou un deck porte son titre court comme nom de fichier, sans date : la date vit dans son frontmatter.
 - Processus : `process-[nom].md`
 - Projets : `1-Projects/[nom-projet]/README.md`
 - Transcripts : `3-Resources/sources/transcripts/YYYY-MM-DD-[slug].txt`, avec le même slug que le compte rendu qui les résume.
