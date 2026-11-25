@@ -885,21 +885,19 @@ body {
 .deck .band.cols-3 {
   grid-template-columns: repeat(3, 1fr);
 }
+/* Type sits on the item, not on its paragraph: a one-line MDX slot arrives
+   without a <p>, and the dash must share the text's line box either way. */
 .deck .band-item {
   display: flex;
   gap: 18px;
+  font-size: 23px;
+  line-height: 1.45;
+  font-weight: 500;
 }
 .deck .band-item::before {
   content: "—";
   font-weight: 600;
-  font-size: 23px;
   flex: none;
-}
-.deck .band-item p {
-  font-size: 23px;
-  line-height: 1.45;
-  margin: 0;
-  font-weight: 500;
 }
 /* Single-statement variant: a label, a sentence and a figure on the right. */
 .deck .band.headline {

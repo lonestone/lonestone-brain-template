@@ -47,12 +47,16 @@ export function pageHref(dirSegs: string[], raw: string): string | null {
   const isFolder = target.endsWith("/");
   const isMd = /\.(md|mdx)$/i.test(target);
   const isHtml = /\.html?$/i.test(target);
+  // Raw files served at /<path>.<ext>, the extensions of ASSET_MIME in wiki-fs.
+  const isRawFile = /\.(txt|pdf|png|jpe?g|gif|webp|svg)$/i.test(target);
   // A root-relative URL without an extension is already an app route.
   if (isAbsolute && !isMd) return null;
-  if (!isFolder && !isMd && !isHtml) return null;
+  if (!isFolder && !isMd && !isHtml && !isRawFile) return null;
   const repoPath = resolveRepoPath(isAbsolute ? [] : dirSegs, target);
-  // Standalone HTML pages are served raw at /<path>.html (keep the extension).
-  if (isHtml) return `/${repoPath}${suffix}`;
+  // Standalone HTML pages and raw files keep their extension. The relative link has to become
+  // root-relative: the page URL has one more segment than its source file, so the browser would
+  // resolve it one level too deep.
+  if (isHtml || isRawFile) return `/${repoPath}${suffix}`;
   return wikiUrl(repoPath.replace(/\.(md|mdx)$/i, "")) + suffix;
 }
 

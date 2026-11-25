@@ -101,6 +101,8 @@ export const ASSET_MIME: Record<string, string> = {
   webp: "image/webp",
   svg: "image/svg+xml",
   pdf: "application/pdf",
+  // Verbatim captures in 3-Resources/sources/ (meeting transcripts), linked from the pages that use them.
+  txt: "text/plain; charset=utf-8",
 };
 
 function relPath(abs: string): string {
