@@ -142,7 +142,9 @@ Entrées les plus récentes en haut. Chaque entrée suit le format :
 
 `USER.md` à la racine est un fichier non versionné pour la configuration propre à chaque machine : chemins de documents locaux, stockage partagé, projets voisins. Copier `USER.md.example` pour le créer. Les skills qui ont besoin d'un chemin local le lisent.
 
-## Web (`web/`)
+## Wiki, le site `web/`
+
+Toute page sur laquelle on travaille s'ouvre dans le panneau navigateur, quand un outil le permet.
 
 Le site `web/` (Astro) sert tout le wiki : chaque markdown devient une page à son chemin, et les `.mdx` rangés dans un dossier `documents/` ont un gabarit de document imprimable ou de présentation.
 
