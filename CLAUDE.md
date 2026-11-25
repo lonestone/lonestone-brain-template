@@ -154,7 +154,7 @@ Le site `web/` (Astro) sert tout le wiki : chaque markdown devient une page à s
 - **Avant de toucher au code de `web/`** (composant, renderer, style, collection) ou pour adapter le template à une entreprise, invoquer la skill "web-dev".
 - Le serveur de dev tourne normalement déjà sur le port fixé dans `web/astro.config.mjs` (`server.port`). Utiliser ce port uniquement ; s'il ne répond pas, le démarrer, et s'il est cassé, le relancer. Ne jamais le démarrer sur un autre port.
 
-## Direction artistique
+## Design
 
 À personnaliser avec l'identité de l'entreprise. Par défaut :
 

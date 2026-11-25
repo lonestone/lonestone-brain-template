@@ -8,7 +8,7 @@ Usage:
 The prompt describes the CONTENT (texts, structure). The visual style is kept
 apart so it stays stable from one generation to the next:
 
-- `charte` (default): the "Direction artistique" section of the repository's
+- `charte` (default): the "Design" section of the repository's
   CLAUDE.md is prepended to the prompt. Falls back to `neutral` when the
   section is missing.
 - `neutral`: a sober, flat editorial style, independent of any brand.
@@ -33,7 +33,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parents[2]
 ENV_FILE = REPO_ROOT / ".env"
 CLAUDE_MD = REPO_ROOT / "CLAUDE.md"
-STYLE_HEADING = "direction artistique"
+STYLE_HEADING = "design"
 
 MODEL = "gemini-3-pro-image-preview"
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
@@ -70,7 +70,7 @@ def load_env(path: Path) -> None:
 
 
 def art_direction() -> str | None:
-    """Return the body of the "Direction artistique" section of CLAUDE.md, if any."""
+    """Return the body of the "Design" section of CLAUDE.md, if any."""
     if not CLAUDE_MD.exists():
         return None
     lines = CLAUDE_MD.read_text(encoding="utf-8").splitlines()
@@ -101,7 +101,7 @@ def build_prompt(prompt: str, style: str, ratio: str | None) -> str:
             )
         else:
             print(
-                "No 'Direction artistique' section in CLAUDE.md, using the neutral style.",
+                "No 'Design' section in CLAUDE.md, using the neutral style.",
                 file=sys.stderr,
             )
             style_text = NEUTRAL_STYLE

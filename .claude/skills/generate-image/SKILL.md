@@ -1,6 +1,6 @@
 ---
 name: generate-image
-description: Génère une image (illustration, infographie, schéma stylisé, couverture) via Nano Banana Pro (Google AI, modèle Gemini 3 Pro Image), dans le style défini par la section « Direction artistique » de CLAUDE.md. À utiliser pour habiller un post, une slide, un document ou une page wiki. Jamais pour des photos réalistes.
+description: Génère une image (illustration, infographie, schéma stylisé, couverture) via Nano Banana Pro (Google AI, modèle Gemini 3 Pro Image), dans le style défini par la section « Design » de CLAUDE.md. À utiliser pour habiller un post, une slide, un document ou une page wiki. Jamais pour des photos réalistes.
 argument-hint: '["<prompt>" <output-path.png> [--ratio 16:9|1:1|9:16|4:3|3:4] [--style charte|neutral|none]]'
 ---
 
@@ -34,11 +34,11 @@ Sortie : fichier PNG au chemin indiqué, dossiers parents créés si besoin.
 
 Pour qu'un même style sorte stable d'une génération à l'autre, il est décrit une fois, hors du prompt. Le prompt ne porte que le contenu (textes, structure).
 
-- `--style charte` (par défaut) : le script lit la section `## Direction artistique` de `CLAUDE.md`, à la racine du dépôt, et la place en tête du prompt. C'est là que l'entreprise décrit sa palette (codes hexadécimaux), sa typographie, son ton visuel et ses interdits. Pour faire évoluer le style, modifier cette section, jamais le redécrire dans chaque prompt.
-- `--style neutral` : style éditorial sobre et plat, indépendant de toute marque. Il sert aussi de repli quand `CLAUDE.md` n'a pas de section « Direction artistique ».
+- `--style charte` (par défaut) : le script lit la section `## Design` de `CLAUDE.md`, à la racine du dépôt, et la place en tête du prompt. C'est là que l'entreprise décrit sa palette (codes hexadécimaux), sa typographie, son ton visuel et ses interdits. Pour faire évoluer le style, modifier cette section, jamais le redécrire dans chaque prompt.
+- `--style neutral` : style éditorial sobre et plat, indépendant de toute marque. Il sert aussi de repli quand `CLAUDE.md` n'a pas de section « Design ».
 - `--style none` : le prompt part brut, pour explorer un style avant de l'inscrire dans `CLAUDE.md`.
 
-Une section « Direction artistique » efficace pour la génération donne des consignes vérifiables : couleurs en hexadécimal avec leur rôle (fond, texte, accent), familles de polices, règles de composition (grille, marges, filets plutôt que cartes), et une liste d'interdits (ombres, dégradés, néon, 3D, fond sombre).
+Une section « Design » efficace pour la génération donne des consignes vérifiables : couleurs en hexadécimal avec leur rôle (fond, texte, accent), familles de polices, règles de composition (grille, marges, filets plutôt que cartes), et une liste d'interdits (ombres, dégradés, néon, 3D, fond sombre).
 
 ## Cas d'usage et interdits
 

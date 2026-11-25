@@ -21,7 +21,7 @@ Une skill s'ajoute en déposant son dossier `.claude/skills/<nom>/SKILL.md`. Ce 
 | **[print-doc](#print-doc)** | Exporte en PDF n'importe quelle page de la web app | aucune |
 | **[edit-mdx](#edit-mdx)** | Règles d'écriture des contenus MDX (documents, decks, pages avec composants) | [web-dev](#web-dev), [print-doc](#print-doc) |
 | **[web-dev](#web-dev)** | Règles de développement de la web app et adaptation du template | [print-doc](#print-doc) |
-| **[generate-image](#generate-image)** | Génère une illustration ou une infographie dans le style de la « Direction artistique » de CLAUDE.md | aucune |
+| **[generate-image](#generate-image)** | Génère une illustration ou une infographie dans le style de la section « Design » de CLAUDE.md | aucune |
 | **[write-social-post](#write-social-post)** | Rédige un post LinkedIn ou X à partir d'une idée, avec hooks et conclusions au choix avant le corps | [content-rules](#content-rules), [generate-image](#generate-image) |
 | **[email-rules](#email-rules)** | Règles de ton et de forme des emails, brouillons uniquement | [content-rules](#content-rules) |
 | **[content-rules](#content-rules)** | Règles d'écriture et de réécriture de tout contenu, en toutes langues | aucune |
@@ -176,10 +176,10 @@ Une skill s'ajoute en déposant son dossier `.claude/skills/<nom>/SKILL.md`. Ce 
 </details>
 
 <details id="generate-image" class="my-4 overflow-hidden rounded-xl border border-zinc-200 bg-white">
-<summary class="cursor-pointer list-none px-4 py-3 hover:bg-zinc-50"><div class="flex flex-wrap items-center gap-2"><strong class="text-base font-semibold text-zinc-900">generate-image</strong></div><p class="mt-1 text-sm font-normal text-zinc-500">Génère une illustration ou une infographie dans le style de la « Direction artistique » de CLAUDE.md.</p></summary>
+<summary class="cursor-pointer list-none px-4 py-3 hover:bg-zinc-50"><div class="flex flex-wrap items-center gap-2"><strong class="text-base font-semibold text-zinc-900">generate-image</strong></div><p class="mt-1 text-sm font-normal text-zinc-500">Génère une illustration ou une infographie dans le style de la section « Design » de CLAUDE.md.</p></summary>
 <div class="border-t border-zinc-200 bg-zinc-50 px-5 py-4">
 
-- **Rôle** : génère une image via Nano Banana Pro (Google AI) pour un post, une slide, un document ou une page wiki. Le style vient de la section « Direction artistique » de `CLAUDE.md`, le prompt ne porte que le contenu. Jamais de photo réaliste.
+- **Rôle** : génère une image via Nano Banana Pro (Google AI) pour un post, une slide, un document ou une page wiki. Le style vient de la section « Design » de `CLAUDE.md`, le prompt ne porte que le contenu. Jamais de photo réaliste.
 - **Déclenchement** : à la demande de l'utilisateur, ou sur proposition de **[skill "write-social-post"](#write-social-post)**, **[skill "build-slides"](#build-slides)** et **[skill "write-document"](#write-document)**.
 - **Étapes** :
   1. Discuter le concept : composition, hiérarchie, textes à inclure

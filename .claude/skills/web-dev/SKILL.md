@@ -21,7 +21,7 @@ description: Règles de développement de la web app `web/` (Astro, Tailwind, MD
 
 - `web/src/lib/site-config.ts` porte le nom de l'entreprise, son site, l'email de contact et le titre du wiki. Tout endroit qui nomme l'entreprise le lit là.
 - `web/src/styles/global.css` (`@theme`) porte la palette des documents, `web/src/styles/deck.css` (`.deck`) celle des decks. Remplacer `--color-brand`, `--color-accent` et `--deck-accent` par les couleurs de la marque, en gardant une couleur de marque claire sur laquelle un texte foncé reste lisible.
-- Décrire l'identité visuelle dans la section « Direction artistique » de `CLAUDE.md`, que lisent aussi les skills "generate-image" et "edit-mdx".
+- Décrire l'identité visuelle dans la section « Design » de `CLAUDE.md`, que lisent aussi les skills "generate-image" et "edit-mdx".
 
 ## Collections
 

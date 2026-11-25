@@ -64,7 +64,7 @@ npm run dev
 Le contenu livré est un exemple, celui d'une entreprise fictive nommée « Exemple ». Pour démarrer, le plus simple est de demander à l'assistant : « Adapte ce wiki à mon entreprise », en lui donnant le nom, le site, les couleurs et quelques informations sur l'équipe. Il s'occupe des étapes suivantes :
 
 1. Remplacer le nom et les coordonnées de l'entreprise (`web/src/lib/site-config.ts`) et le titre du [README](README.md).
-2. Reprendre les couleurs de la marque dans le site et les présentations, et décrire l'identité visuelle dans la section « Direction artistique » de `CLAUDE.md`.
+2. Reprendre les couleurs de la marque dans le site et les présentations, et décrire l'identité visuelle dans la section « Design » de `CLAUDE.md`.
 3. Supprimer le projet et les pages d'exemple, ou les réécrire avec vos vraies informations.
 4. Ajouter à `CLAUDE.md` votre vocabulaire et vos règles propres.
 
